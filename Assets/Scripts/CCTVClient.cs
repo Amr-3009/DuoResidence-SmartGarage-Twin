@@ -11,54 +11,44 @@ using TMPro;
 public class CCTVClient : MonoBehaviour
 {
     [Header("Network Configuration")]
-    public string serverIp = "127.0.0.1"; 
+    public string serverIp = "localhost"; 
     public int serverPort = 8080;
 
     [Header("UI Component Links")]
     public RawImage streamDisplay;       
     public RectTransform displayRect;    
+    public RectTransform viewportParent; 
     public TextMeshProUGUI camLabelText;      
     public Button sessionButton;         
     public TextMeshProUGUI sessionButtonText;  
 
     [Header("Camera Control Buttons (Auto-Wired)")]
     public Button btnOverview;
-    public Button btnLaneA;
-    public Button btnLaneB;
-    public Button btnLaneC;
     public Button btnEntrance;
     public Button btnExit;
+    public Button btnResetView; // 🚀 NEW: Reference slot for the reset view action
 
-    [Header("🎚️ CANVAS CALIBRATION DECK: LANE A")]
-    public Slider sliderA_Zoom;
-    public Slider sliderA_X;
-    public Slider sliderA_Y;
+    [Header("🎚️ UNIFIED OVERVIEW CONTROL DECK")]
+    public Slider sliderOverview_Zoom;
+    public Slider sliderOverview_X;
+    public Slider sliderOverview_Y;
 
-    [Header("🎚️ CANVAS CALIBRATION DECK: LANE B")]
-    public Slider sliderB_Zoom;
-    public Slider sliderB_X;
-    public Slider sliderB_Y;
+    // Active operating coordinates for overview pan and zoom
+    private float overviewZoom = 1.0f;
+    private float overviewX = 0f;
+    private float overviewY = 0f;
 
-    [Header("🎚️ CANVAS CALIBRATION DECK: LANE C")]
-    public Slider sliderC_Zoom;
-    public Slider sliderC_X;
-    public Slider sliderC_Y;
-
-    // Active operating coordinates
-    private float laneA_Zoom, laneA_X, laneA_Y;
-    private float laneB_Zoom, laneB_X, laneB_Y;
-    private float laneC_Zoom, laneC_X, laneC_Y;
-
-    // Hardcoded baseline default rulesets (Wiped and restored on session cycles)
-    private float defA_Zoom = 2.5f, defA_X = 0f, defA_Y = 0f;
-    private float defB_Zoom = 2.5f, defB_X = 0f, defB_Y = 0f;
-    private float defC_Zoom = 2.5f, defC_X = 0f, defC_Y = 0f;
+    // Hardcoded baseline system defaults
+    private float defZoom = 1.0f;
+    private float defX = 0f;
+    private float defY = 0f;
 
     private bool _isSessionActive = false;
     private string _currentStreamPath = "/lanes";
     private string _activeMode = "OVERVIEW";
 
     private Thread _networkThread;
+    private HttpWebRequest _activeRequest; 
     private Texture2D _videoTexture;
     private byte[] _latestFrameBytes;
     private readonly object _lockObject = new object();
@@ -69,41 +59,66 @@ public class CCTVClient : MonoBehaviour
         _videoTexture = new Texture2D(2, 2, TextureFormat.RGB24, false);
         if (streamDisplay != null) streamDisplay.texture = _videoTexture;
 
-        // Force variables back to system defaults on startup instance
+        if (viewportParent == null && displayRect != null)
+        {
+            viewportParent = displayRect.parent as RectTransform;
+        }
+
         ResetVariablesToDefaultSystemValues();
         ResetViewportTransform();
         UpdateUIElements();
 
-        // Bind interactive UI button click listeners programmatically
         if (sessionButton != null) sessionButton.onClick.AddListener(ToggleMasterSession);
         if (btnOverview != null) btnOverview.onClick.AddListener(() => SelectCameraView("OVERVIEW"));
-        if (btnLaneA != null) btnLaneA.onClick.AddListener(() => SelectCameraView("LANE_A"));
-        if (btnLaneB != null) btnLaneB.onClick.AddListener(() => SelectCameraView("LANE_B"));
-        if (btnLaneC != null) btnLaneC.onClick.AddListener(() => SelectCameraView("LANE_C"));
         if (btnEntrance != null) btnEntrance.onClick.AddListener(() => SelectCameraView("ENTRANCE"));
         if (btnExit != null) btnExit.onClick.AddListener(() => SelectCameraView("EXIT"));
+        
+        // 🚀 NEW: Wire up the click event for the reset function programmatically
+        if (btnResetView != null) btnResetView.onClick.AddListener(ResetSlidersAndTransform);
 
-        // Bind UI Slider value capture actions programmatically
         WireSliderListeners();
         
-        // Push starting defaults onto the slider handles visually
         UpdateSliderUiHandlesToMatchVariables();
         UpdateSliderInteractivityMatrix();
     }
 
     private void WireSliderListeners()
     {
-        if (sliderA_Zoom != null) sliderA_Zoom.onValueChanged.AddListener((v) => laneA_Zoom = v);
-        if (sliderA_X != null) sliderA_X.onValueChanged.AddListener((v) => laneA_X = v);
-        if (sliderA_Y != null) sliderA_Y.onValueChanged.AddListener((v) => laneA_Y = v);
+        if (sliderOverview_Zoom != null) sliderOverview_Zoom.onValueChanged.AddListener((v) => {
+            overviewZoom = v;
+            RecalculateDynamicPanBounds();
+        });
 
-        if (sliderB_Zoom != null) sliderB_Zoom.onValueChanged.AddListener((v) => laneB_Zoom = v);
-        if (sliderB_X != null) sliderB_X.onValueChanged.AddListener((v) => laneB_X = v);
-        if (sliderB_Y != null) sliderB_Y.onValueChanged.AddListener((v) => laneB_Y = v);
+        if (sliderOverview_X != null) sliderOverview_X.onValueChanged.AddListener((v) => overviewX = v);
+        if (sliderOverview_Y != null) sliderOverview_Y.onValueChanged.AddListener((v) => overviewY = v);
+    }
 
-        if (sliderC_Zoom != null) sliderC_Zoom.onValueChanged.AddListener((v) => laneC_Zoom = v);
-        if (sliderC_X != null) sliderC_X.onValueChanged.AddListener((v) => laneC_X = v);
-        if (sliderC_Y != null) sliderC_Y.onValueChanged.AddListener((v) => laneC_Y = v);
+    private void RecalculateDynamicPanBounds()
+    {
+        if (displayRect == null || viewportParent == null || sliderOverview_X == null || sliderOverview_Y == null) return;
+
+        float viewWidth = viewportParent.rect.width;
+        float viewHeight = viewportParent.rect.height;
+
+        float maxDeltaX = (viewWidth * (overviewZoom - 1f)) / 2f;
+        float maxDeltaY = (viewHeight * (overviewZoom - 1f)) / 2f;
+
+        sliderOverview_X.minValue = -maxDeltaX;
+        sliderOverview_X.maxValue = maxDeltaX;
+
+        sliderOverview_Y.minValue = -maxDeltaY;
+        sliderOverview_Y.maxValue = maxDeltaY;
+    }
+
+    /// <summary>
+    /// 🚀 NEW: Resets all active position variables and snaps slider elements back to zero bounds cleanly
+    /// </summary>
+    public void ResetSlidersAndTransform()
+    {
+        ResetVariablesToDefaultSystemValues();
+        UpdateSliderUiHandlesToMatchVariables();
+        ApplyGeometricViewportView();
+        Debug.Log("[CCTV Client] Overview pan/zoom matrix reset to factory center-baseline.");
     }
 
     public void ToggleMasterSession()
@@ -119,7 +134,6 @@ public class CCTVClient : MonoBehaviour
             StopNetworkStream();
             ClearDisplayToBlack();
             
-            // 🔄 Wipe all user slider modifications and restore defaults when session is terminated!
             ResetVariablesToDefaultSystemValues();
             UpdateSliderUiHandlesToMatchVariables();
         }
@@ -130,44 +144,29 @@ public class CCTVClient : MonoBehaviour
 
     private void ResetVariablesToDefaultSystemValues()
     {
-        laneA_Zoom = defA_Zoom; laneA_X = defA_X; laneA_Y = defA_Y;
-        laneB_Zoom = defB_Zoom; laneB_X = defB_X; laneB_Y = defB_Y;
-        laneC_Zoom = defC_Zoom; laneC_X = defC_X; laneC_Y = defC_Y;
+        overviewZoom = defZoom; 
+        overviewX = defX; 
+        overviewY = defY;
     }
 
     private void UpdateSliderUiHandlesToMatchVariables()
     {
-        if (sliderA_Zoom != null) sliderA_Zoom.value = laneA_Zoom;
-        if (sliderA_X != null) sliderA_X.value = laneA_X;
-        if (sliderA_Y != null) sliderA_Y.value = laneA_Y;
-
-        if (sliderB_Zoom != null) sliderB_Zoom.value = laneB_Zoom;
-        if (sliderB_X != null) sliderB_X.value = laneB_X;
-        if (sliderB_Y != null) sliderB_Y.value = laneB_Y;
-
-        if (sliderC_Zoom != null) sliderC_Zoom.value = laneC_Zoom;
-        if (sliderC_X != null) sliderC_X.value = laneC_X;
-        if (sliderC_Y != null) sliderC_Y.value = laneC_Y;
+        if (sliderOverview_Zoom != null) sliderOverview_Zoom.value = overviewZoom;
+        RecalculateDynamicPanBounds();
+        if (sliderOverview_X != null) sliderOverview_X.value = overviewX;
+        if (sliderOverview_Y != null) sliderOverview_Y.value = overviewY;
     }
 
     private void UpdateSliderInteractivityMatrix()
     {
-        // Controls are completely dead unless the security session loop is turned on
-        bool laneAActive = _isSessionActive && _activeMode == "LANE_A";
-        bool laneBActive = _isSessionActive && _activeMode == "LANE_B";
-        bool laneCActive = _isSessionActive && _activeMode == "LANE_C";
+        bool allowOverviewControls = _isSessionActive && _activeMode == "OVERVIEW";
 
-        if (sliderA_Zoom != null) sliderA_Zoom.interactable = laneAActive;
-        if (sliderA_X != null) sliderA_X.interactable = laneAActive;
-        if (sliderA_Y != null) sliderA_Y.interactable = laneAActive;
-
-        if (sliderB_Zoom != null) sliderB_Zoom.interactable = laneBActive;
-        if (sliderB_X != null) sliderB_X.interactable = laneBActive;
-        if (sliderB_Y != null) sliderB_Y.interactable = laneBActive;
-
-        if (sliderC_Zoom != null) sliderC_Zoom.interactable = laneCActive;
-        if (sliderC_X != null) sliderC_X.interactable = laneCActive;
-        if (sliderC_Y != null) sliderC_Y.interactable = laneCActive;
+        if (sliderOverview_Zoom != null) sliderOverview_Zoom.interactable = allowOverviewControls;
+        if (sliderOverview_X != null) sliderOverview_X.interactable = allowOverviewControls;
+        if (sliderOverview_Y != null) sliderOverview_Y.interactable = allowOverviewControls;
+        
+        // 🚀 NEW: The reset button behaves logically—it locks out unless you are on the interactive lanes view
+        if (btnResetView != null) btnResetView.interactable = allowOverviewControls;
     }
 
     public void SelectCameraView(string mode)
@@ -181,12 +180,19 @@ public class CCTVClient : MonoBehaviour
         if (targetPath != _currentStreamPath)
         {
             _currentStreamPath = targetPath;
-            if (_isSessionActive) StartNetworkStream();
+            
+            lock (_lockObject)
+            {
+                if (_activeRequest != null)
+                {
+                    try { _activeRequest.Abort(); } catch {}
+                }
+            }
         }
 
         ApplyGeometricViewportView();
         UpdateUIElements();
-        UpdateSliderInteractivityMatrix(); // 🔒 Dynamically lock/unlock matching rows instantly
+        UpdateSliderInteractivityMatrix(); 
     }
 
     private void ApplyGeometricViewportView()
@@ -195,17 +201,9 @@ public class CCTVClient : MonoBehaviour
 
         switch (_activeMode)
         {
-            case "LANE_A":
-                displayRect.localScale = new Vector3(laneA_Zoom, laneA_Zoom, 1f);
-                displayRect.anchoredPosition = new Vector2(laneA_X, laneA_Y);
-                break;
-            case "LANE_B":
-                displayRect.localScale = new Vector3(laneB_Zoom, laneB_Zoom, 1f);
-                displayRect.anchoredPosition = new Vector2(laneB_X, laneB_Y);
-                break;
-            case "LANE_C":
-                displayRect.localScale = new Vector3(laneC_Zoom, laneC_Zoom, 1f);
-                displayRect.anchoredPosition = new Vector2(laneC_X, laneC_Y);
+            case "OVERVIEW":
+                displayRect.localScale = new Vector3(overviewZoom, overviewZoom, 1f);
+                displayRect.anchoredPosition = new Vector2(overviewX, overviewY);
                 break;
             default:
                 ResetViewportTransform();
@@ -224,13 +222,14 @@ public class CCTVClient : MonoBehaviour
 
         if (_isSessionActive)
         {
-            ApplyGeometricViewportView(); // Keep rendering tracking modifications fluidly
+            ApplyGeometricViewportView(); 
         }
     }
 
     private void StartNetworkStream()
     {
         StopNetworkStream(); 
+        _isSessionActive = true;
         _networkThread = new Thread(MjpegStreamListener);
         _networkThread.IsBackground = true;
         _networkThread.Start();
@@ -238,24 +237,37 @@ public class CCTVClient : MonoBehaviour
 
     private void StopNetworkStream()
     {
-        if (_networkThread != null && _networkThread.IsAlive) _networkThread.Abort();
+        _isSessionActive = false;
+        lock (_lockObject)
+        {
+            if (_activeRequest != null)
+            {
+                try { _activeRequest.Abort(); } catch {}
+                _activeRequest = null;
+            }
+        }
         _hasNewFrameReady = false;
     }
 
     private void MjpegStreamListener()
     {
-        string targetUrl = $"http://{serverIp}:{serverPort}{_currentStreamPath}";
         while (_isSessionActive)
         {
+            string targetUrl = $"http://{serverIp}:{serverPort}{_currentStreamPath}";
+            string cachedPath = _currentStreamPath;
+
             try
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(targetUrl);
                 request.Timeout = 5000;
+                
+                lock (_lockObject) { _activeRequest = request; }
+
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 using (Stream stream = response.GetResponseStream())
                 using (BinaryReader reader = new BinaryReader(stream))
                 {
-                    while (_isSessionActive)
+                    while (_isSessionActive && _currentStreamPath == cachedPath)
                     {
                         string line = ""; int contentLength = 0;
                         while ((line = ReadAsciiLine(reader)) != null)
@@ -275,7 +287,14 @@ public class CCTVClient : MonoBehaviour
                     }
                 }
             }
-            catch (Exception) { Thread.Sleep(1000); }
+            catch (Exception) 
+            { 
+                Thread.Sleep(250); 
+            }
+            finally
+            {
+                lock (_lockObject) { _activeRequest = null; }
+            }
         }
     }
 
@@ -312,7 +331,6 @@ public class CCTVClient : MonoBehaviour
 
     private void OnDestroy()
     {
-        _isSessionActive = false;
         StopNetworkStream();
     }
 }
