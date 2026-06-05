@@ -1,0 +1,160 @@
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using System.Collections.Generic;
+
+public class TwinDashboardController : MonoBehaviour
+{
+    [Header("Node-RED Style Visual Grid Prefabs")]
+    [SerializeField] private GameObject gridSlotUiPrefab;
+
+    [Header("Lane Grid Layout Target Panels")]
+    [SerializeField] private Transform laneAGridParent;
+    [SerializeField] private Transform laneBGridParent;
+    [SerializeField] private Transform laneCGridParent;
+
+    [Header("Lane Status Text Summary Fields")]
+    [SerializeField] private TextMeshProUGUI laneAText;
+    [SerializeField] private TextMeshProUGUI laneBText;
+    [SerializeField] private TextMeshProUGUI laneCText;
+
+    [Header("Capacity Gauge Components")]
+    [SerializeField] private Slider capacitySlider;
+    [SerializeField] private Image sliderFillImage;
+    [SerializeField] private TextMeshProUGUI capacityPercentageText;
+    [SerializeField] private TextMeshProUGUI facilityStatusText;
+
+    [Header("Dynamic Dashboard Palette")]
+    [SerializeField] private Color vacantZoneColor = Color.green;
+    [SerializeField] private Color occupiedZoneColor = Color.red;
+
+    private int totalSlotsPerLane = 40; // <-- UPDATED: 40 slots per lane
+    private int grandTotalFacilityCapacity = 120; // 3 lanes * 40 slots = 120
+
+    private Dictionary<string, bool> twinCapacityMap = new Dictionary<string, bool>();
+    private Dictionary<string, Image> gridUiElementMap = new Dictionary<string, Image>();
+
+    void Start()
+    {
+        InitializeDashboardMatrices();
+        MQTTConnectionManager.OnTelemetryMessageReceived += ProcessIncomingDashboardTelemetry;
+        UpdateDashboardVisuals();
+    }
+
+    private void OnDestroy()
+    {
+        MQTTConnectionManager.OnTelemetryMessageReceived -= ProcessIncomingDashboardTelemetry;
+    }
+
+    private void InitializeDashboardMatrices()
+    {
+        string[] targetLanes = { "A", "B", "C" }; 
+        foreach (string lane in targetLanes)
+        {
+            Transform targetParentContainer = null;
+            if (lane == "A") targetParentContainer = laneAGridParent;
+            else if (lane == "B") targetParentContainer = laneBGridParent;
+            else if (lane == "C") targetParentContainer = laneCGridParent;
+
+            // UPDATED: Spawns 20 slots per row to equal 40 total per lane
+            BuildLaneUISequence(lane, 1, 20, targetParentContainer);
+            BuildLaneUISequence(lane, 21, 40, targetParentContainer);
+        }
+    }
+
+    private void BuildLaneUISequence(string laneID, int start, int end, Transform parentContainer)
+    {
+        for (int i = start; i <= end; i++)
+        {
+            string slotID = laneID + i.ToString("D2");
+            twinCapacityMap[slotID] = true;
+
+            if (gridSlotUiPrefab != null && parentContainer != null)
+            {
+                GameObject uiBlock = Instantiate(gridSlotUiPrefab, parentContainer);
+                uiBlock.name = "UiTile_" + slotID;
+
+                // Bulletproof Text Catch
+                TextMeshProUGUI tmpLabel = uiBlock.GetComponentInChildren<TextMeshProUGUI>(true);
+                if (tmpLabel != null) tmpLabel.text = slotID;
+                else
+                {
+                    Text legacyLabel = uiBlock.GetComponentInChildren<Text>(true);
+                    if (legacyLabel != null) legacyLabel.text = slotID;
+                }
+
+                Image imgComp = uiBlock.GetComponent<Image>();
+                if (imgComp != null)
+                {
+                    imgComp.color = vacantZoneColor;
+                    gridUiElementMap[slotID] = imgComp;
+                }
+            }
+        }
+    }
+
+    private void ProcessIncomingDashboardTelemetry(string topic, string payload)
+    {
+        string[] structuralParts = topic.Split('/');
+        if (structuralParts.Length < 6) return;
+
+        string slotID = structuralParts[structuralParts.Length - 1];
+        bool isVacant = payload.Contains("IS VACANT");
+
+        if (twinCapacityMap.ContainsKey(slotID))
+        {
+            twinCapacityMap[slotID] = isVacant;
+            if (gridUiElementMap.TryGetValue(slotID, out Image targetTileGraphic))
+            {
+                targetTileGraphic.color = isVacant ? vacantZoneColor : occupiedZoneColor;
+            }
+            UpdateDashboardVisuals();
+        }
+    }
+
+    private void UpdateDashboardVisuals()
+    {
+        int occupiedCountA = 0;
+        int occupiedCountB = 0;
+        int occupiedCountC = 0;
+
+        foreach (var slot in twinCapacityMap)
+        {
+            if (!slot.Value) 
+            {
+                if (slot.Key.StartsWith("A")) occupiedCountA++;
+                else if (slot.Key.StartsWith("B")) occupiedCountB++;
+                else if (slot.Key.StartsWith("C")) occupiedCountC++;
+            }
+        }
+
+        int cumulativeOccupiedSpaces = occupiedCountA + occupiedCountB + occupiedCountC;
+
+        if (laneAText != null) laneAText.text = $"Lane A: {occupiedCountA} / {totalSlotsPerLane} Occupied";
+        if (laneBText != null) laneBText.text = $"Lane B: {occupiedCountB} / {totalSlotsPerLane} Occupied";
+        if (laneCText != null) laneCText.text = $"Lane C: {occupiedCountC} / {totalSlotsPerLane} Occupied";
+
+        if (capacitySlider != null)
+        {
+            capacitySlider.maxValue = grandTotalFacilityCapacity;
+            capacitySlider.value = cumulativeOccupiedSpaces;
+        }
+
+        float computedFillRatio = ((float)cumulativeOccupiedSpaces / grandTotalFacilityCapacity) * 100f;
+        if (capacityPercentageText != null)
+        {
+            capacityPercentageText.text = $"{computedFillRatio:F0}% Full";
+        }
+
+        if (sliderFillImage != null)
+        {
+            sliderFillImage.color = Color.Lerp(vacantZoneColor, occupiedZoneColor, computedFillRatio / 100f);
+        }
+
+        if (facilityStatusText != null)
+        {
+            if (cumulativeOccupiedSpaces >= grandTotalFacilityCapacity) facilityStatusText.text = "<color=#FF0055><B>FACILITY FULL</B></color>";
+            else facilityStatusText.text = "<color=#00FFCC><B>MONITORING ACTIVE</B></color>";
+        }
+    }
+}
