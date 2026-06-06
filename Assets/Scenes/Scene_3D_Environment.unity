@@ -9768,8 +9768,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bbdba10067a4a349869964fc8ce7219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CCTVClient
-  serverIp: localhost
-  serverPort: 8080
+  serverIp: diligence-brunt-anything.ngrok-free.dev
+  serverPort: 443
+  useHttps: 1
   streamDisplay: {fileID: 822574844}
   displayRect: {fileID: 822574843}
   viewportParent: {fileID: 1639465072}
