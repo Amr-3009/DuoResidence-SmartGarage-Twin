@@ -13,6 +13,7 @@ public class CCTVClient : MonoBehaviour
     [Header("Network Configuration")]
     public string serverIp = "localhost"; 
     public int serverPort = 8080;
+    public bool useHttps = false; // 🚀 NEW: Check this TRUE when using ngrok URLs!
 
     [Header("UI Component Links")]
     public RawImage streamDisplay;       
@@ -26,7 +27,7 @@ public class CCTVClient : MonoBehaviour
     public Button btnOverview;
     public Button btnEntrance;
     public Button btnExit;
-    public Button btnResetView; // 🚀 NEW: Reference slot for the reset view action
+    public Button btnResetView; 
 
     [Header("🎚️ UNIFIED OVERVIEW CONTROL DECK")]
     public Slider sliderOverview_Zoom;
@@ -73,7 +74,6 @@ public class CCTVClient : MonoBehaviour
         if (btnEntrance != null) btnEntrance.onClick.AddListener(() => SelectCameraView("ENTRANCE"));
         if (btnExit != null) btnExit.onClick.AddListener(() => SelectCameraView("EXIT"));
         
-        // 🚀 NEW: Wire up the click event for the reset function programmatically
         if (btnResetView != null) btnResetView.onClick.AddListener(ResetSlidersAndTransform);
 
         WireSliderListeners();
@@ -110,9 +110,6 @@ public class CCTVClient : MonoBehaviour
         sliderOverview_Y.maxValue = maxDeltaY;
     }
 
-    /// <summary>
-    /// 🚀 NEW: Resets all active position variables and snaps slider elements back to zero bounds cleanly
-    /// </summary>
     public void ResetSlidersAndTransform()
     {
         ResetVariablesToDefaultSystemValues();
@@ -165,7 +162,6 @@ public class CCTVClient : MonoBehaviour
         if (sliderOverview_X != null) sliderOverview_X.interactable = allowOverviewControls;
         if (sliderOverview_Y != null) sliderOverview_Y.interactable = allowOverviewControls;
         
-        // 🚀 NEW: The reset button behaves logically—it locks out unless you are on the interactive lanes view
         if (btnResetView != null) btnResetView.interactable = allowOverviewControls;
     }
 
@@ -253,13 +249,20 @@ public class CCTVClient : MonoBehaviour
     {
         while (_isSessionActive)
         {
-            string targetUrl = $"http://{serverIp}:{serverPort}{_currentStreamPath}";
+            // 🚀 STRATEGIC REVISION: Handles secure protocol scaling automatically
+            string protocol = useHttps ? "https" : "http";
+            string portSuffix = (useHttps && serverPort == 443) || (!useHttps && serverPort == 80) ? "" : $":{serverPort}";
+            string targetUrl = $"{protocol}://{serverIp}{portSuffix}{_currentStreamPath}";
             string cachedPath = _currentStreamPath;
 
             try
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(targetUrl);
                 request.Timeout = 5000;
+                
+                // 🚀 CRITICAL CLOUD TUNNEL FIX: Tells ngrok to instantly pass the video bytes 
+                // and skip serving the raw HTML browser warning page!
+                request.Headers.Add("ngrok-skip-browser-warning", "true");
                 
                 lock (_lockObject) { _activeRequest = request; }
 
