@@ -1,0 +1,174 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="project://database/Assets/UI/MainMenu.uss" />
+
+    <ui:VisualElement name="Root" class="root">
+
+        <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+        <ui:VisualElement name="Sidebar" class="sidebar">
+
+            <!-- Brand -->
+            <ui:VisualElement name="Brand" class="brand">
+                <ui:Label name="BrandLabel" text="DIGITAL TWIN" class="brand-label" />
+                <ui:Label name="BrandName" text="DuoResidence" class="brand-name" />
+                <ui:Label name="BrandSub" text="Smart Compound Control Center" class="brand-sub" />
+            </ui:VisualElement>
+
+            <!-- Nav Section -->
+            <ui:VisualElement name="NavSection" class="nav-section">
+                <ui:Label text="NAVIGATION" class="nav-label" />
+
+                <ui:Button name="NavDashboard" class="nav-item nav-item--active">
+                    <ui:VisualElement class="nav-item__icon" />
+                    <ui:Label text="Dashboard" class="nav-item__label" />
+                </ui:Button>
+
+                <ui:Button name="NavLoadScene" class="nav-item">
+                    <ui:VisualElement class="nav-item__icon" />
+                    <ui:Label text="Load Scene" class="nav-item__label" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <!-- Footer -->
+            <ui:VisualElement name="SidebarFooter" class="sidebar-footer">
+                <ui:Label text="v1.0.0 — DuoResidence DT" class="version-label" />
+                <ui:Button name="QuitButton" class="quit-btn">
+                    <ui:VisualElement class="quit-btn__icon" />
+                    <ui:Label text="Quit application" class="quit-btn__label" />
+                </ui:Button>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+        <!-- ═══════════════════ END SIDEBAR ═══════════════════ -->
+
+        <!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+        <ui:VisualElement name="MainContent" class="main-content">
+
+            <!-- TopBar -->
+            <ui:VisualElement name="TopBar" class="topbar">
+                <ui:Label name="PageTitle" text="Dashboard" class="page-title" />
+                <ui:VisualElement name="StatusPill" class="status-pill">
+                    <ui:VisualElement class="status-dot" />
+                    <ui:Label name="StatusText" text="Systems online" class="status-text" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- ─── DASHBOARD PANEL ─── -->
+            <ui:VisualElement name="DashboardPanel" class="content-area">
+
+                <!-- Stats Row -->
+                <ui:VisualElement name="StatsRow" class="stats-row">
+                    <ui:VisualElement class="stat-card">
+                        <ui:Label text="Scenes available" class="stat-label" />
+                        <ui:Label text="2 + 4 planned" class="stat-value" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="stat-card">
+                        <ui:Label text="Garage doors" class="stat-label" />
+                        <ui:Label text="3 units" class="stat-value" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="stat-card">
+                        <ui:Label text="Street lights" class="stat-label" />
+                        <ui:Label text="12 nodes" class="stat-value" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="stat-card">
+                        <ui:Label text="Uptime" class="stat-label" />
+                        <ui:Label text="99%" class="stat-value" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- System Status Panel -->
+                <ui:VisualElement name="StatusPanel" class="status-panel">
+                    <ui:Label text="System status" class="status-panel__title" />
+
+                    <ui:VisualElement class="status-row">
+                        <ui:Label text="Smart garage" class="status-row__label" />
+                        <ui:Label name="Badge_Garage" text="Online" class="badge badge--online" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="status-row">
+                        <ui:Label text="Street lights" class="status-row__label" />
+                        <ui:Label name="Badge_Lights" text="Online" class="badge badge--online" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="status-row">
+                        <ui:Label text="IoT network" class="status-row__label" />
+                        <ui:Label name="Badge_IoT" text="Connected" class="badge badge--online" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Go to Scenes -->
+                <ui:Button name="GoToScenesBtn" text="Go to scenes ↗" class="goto-btn" />
+
+            </ui:VisualElement>
+            <!-- ─── END DASHBOARD PANEL ─── -->
+
+            <!-- ─── LOAD SCENE PANEL ─── -->
+            <ui:VisualElement name="LoadScenePanel" class="content-area" style="display: none;">
+
+                <!-- Active Scenes -->
+                <ui:Label text="ACTIVE SCENES" class="section-label" />
+                <ui:VisualElement name="ActiveGrid" class="scene-grid">
+
+                    <ui:Button name="Card_Garage" class="scene-card">
+                        <ui:VisualElement class="scene-icon scene-icon--blue">
+                            <ui:VisualElement class="scene-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Smart Garage" class="scene-card__name" />
+                        <ui:Label text="3 doors · Sensors active" class="scene-card__meta" />
+                    </ui:Button>
+
+                    <ui:Button name="Card_StreetLights" class="scene-card">
+                        <ui:VisualElement class="scene-icon scene-icon--amber">
+                            <ui:VisualElement class="scene-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Street Lights" class="scene-card__name" />
+                        <ui:Label text="12 nodes · Auto mode" class="scene-card__meta" />
+                    </ui:Button>
+
+                </ui:VisualElement>
+
+                <!-- Future Scenes -->
+                <ui:Label text="FUTURE SCENES" class="section-label" />
+                <ui:VisualElement name="FutureGrid" class="scene-grid">
+
+                    <ui:VisualElement class="scene-card scene-card--locked">
+                        <ui:VisualElement class="scene-icon scene-icon--gray">
+                            <ui:VisualElement class="scene-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Access Control" class="scene-card__name" />
+                        <ui:Label text="Coming soon" class="scene-card__meta" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="scene-card scene-card--locked">
+                        <ui:VisualElement class="scene-icon scene-icon--gray">
+                            <ui:VisualElement class="scene-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="HVAC System" class="scene-card__name" />
+                        <ui:Label text="Coming soon" class="scene-card__meta" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="scene-card scene-card--locked">
+                        <ui:VisualElement class="scene-icon scene-icon--gray">
+                            <ui:VisualElement class="scene-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="EV Chargers" class="scene-card__name" />
+                        <ui:Label text="Coming soon" class="scene-card__meta" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="scene-card scene-card--locked">
+                        <ui:VisualElement class="scene-icon scene-icon--gray">
+                            <ui:VisualElement class="scene-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Security Cameras" class="scene-card__name" />
+                        <ui:Label text="Coming soon" class="scene-card__meta" />
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+            <!-- ─── END LOAD SCENE PANEL ─── -->
+
+        </ui:VisualElement>
+        <!-- ═══════════════════ END MAIN CONTENT ═══════════════════ -->
+
+    </ui:VisualElement>
+</ui:UXML>

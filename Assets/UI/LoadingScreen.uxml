@@ -1,0 +1,44 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:Style src="project://database/Assets/UI/LoadingScreen.uss" />
+
+    <ui:VisualElement name="LoadingRoot" class="loading-root">
+
+        <!-- Brand watermark top-left -->
+        <ui:VisualElement class="brand-watermark">
+            <ui:Label text="DIGITAL TWIN" class="brand-watermark__label" />
+            <ui:Label text="DuoResidence" class="brand-watermark__name" />
+        </ui:VisualElement>
+
+        <!-- Center block -->
+        <ui:VisualElement class="center-block">
+
+            <!-- Scene icon -->
+            <ui:VisualElement name="SceneIconWrapper" class="scene-icon-wrapper">
+                <ui:VisualElement name="SceneIconDot" class="scene-icon-wrapper__dot" />
+            </ui:VisualElement>
+
+            <!-- Scene name + status text -->
+            <ui:Label name="SceneNameLabel" text="Smart Garage" class="scene-name" />
+            <ui:Label name="LoadingStatusLabel" text="Initialising scene..." class="loading-status" />
+
+            <!-- Progress bar -->
+            <ui:VisualElement class="progress-track">
+                <ui:VisualElement name="ProgressFill" class="progress-fill" />
+            </ui:VisualElement>
+
+            <!-- Percentage -->
+            <ui:Label name="ProgressPct" text="0%" class="progress-pct" />
+
+        </ui:VisualElement>
+
+        <!-- Bottom hint -->
+        <ui:VisualElement class="bottom-hint">
+            <ui:Label text="DuoResidence" class="bottom-hint__text" />
+            <ui:VisualElement class="bottom-hint__dot" />
+            <ui:Label text="Smart Compound Digital Twin" class="bottom-hint__text" />
+            <ui:VisualElement class="bottom-hint__dot" />
+            <ui:Label name="VersionLabel" text="v1.0.0" class="bottom-hint__text" />
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,108 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:Style src="project://database/Assets/UI/GarageHUD.uss" />
+
+    <ui:VisualElement name="HUDRoot" class="hud-root">
+
+        <!-- ── Top Bar ─────────────────────────────────────────── -->
+        <ui:VisualElement name="HUDTopBar" class="hud-topbar">
+
+            <!-- Left: Back + Scene pill -->
+            <ui:VisualElement class="hud-topbar__left">
+                <ui:Button name="BackToDashboardBtn" class="back-btn">
+                    <ui:Label text="←" class="back-btn__arrow" />
+                    <ui:Label text="Dashboard" class="back-btn__label" />
+                </ui:Button>
+
+                <ui:VisualElement class="scene-pill">
+                    <ui:VisualElement class="scene-pill__dot" />
+                    <ui:Label text="Smart Garage" class="scene-pill__label" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Right: Scenes button -->
+            <ui:VisualElement class="hud-topbar__right">
+                <ui:Button name="OpenScenesBtn" class="scenes-btn">
+                    <ui:VisualElement class="scenes-btn__icon" />
+                    <ui:Label text="Scenes" class="scenes-btn__label" />
+                </ui:Button>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+        <!-- ── End Top Bar ─────────────────────────────────────── -->
+
+        <!-- ── Popup Overlay ───────────────────────────────────── -->
+        <ui:VisualElement name="PopupOverlay" class="popup-overlay">
+            <ui:VisualElement class="popup-card">
+
+                <!-- Header -->
+                <ui:VisualElement class="popup-header">
+                    <ui:Label text="Load Scene" class="popup-title" />
+                    <ui:Button name="ClosePopupBtn" text="✕" class="popup-close" />
+                </ui:VisualElement>
+
+                <!-- Active Scenes -->
+                <ui:Label text="ACTIVE SCENES" class="popup-section-label" />
+                <ui:VisualElement class="popup-grid">
+
+                    <ui:Button name="PopupCard_Garage" class="popup-card-item popup-card-item--active">
+                        <ui:VisualElement class="popup-icon popup-icon--blue">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Smart Garage" class="popup-card-item__name" />
+                        <ui:Label text="Current scene" class="popup-card-item__meta" />
+                    </ui:Button>
+
+                    <ui:Button name="PopupCard_StreetLights" class="popup-card-item">
+                        <ui:VisualElement class="popup-icon popup-icon--amber">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Street Lights" class="popup-card-item__name" />
+                        <ui:Label text="12 nodes · Auto mode" class="popup-card-item__meta" />
+                    </ui:Button>
+
+                </ui:VisualElement>
+
+                <!-- Future Scenes -->
+                <ui:Label text="FUTURE SCENES" class="popup-section-label" />
+                <ui:VisualElement class="popup-grid">
+
+                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                        <ui:VisualElement class="popup-icon popup-icon--gray">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Access Control" class="popup-card-item__name" />
+                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                        <ui:VisualElement class="popup-icon popup-icon--gray">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="HVAC System" class="popup-card-item__name" />
+                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                        <ui:VisualElement class="popup-icon popup-icon--gray">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="EV Chargers" class="popup-card-item__name" />
+                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                        <ui:VisualElement class="popup-icon popup-icon--gray">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Security Cameras" class="popup-card-item__name" />
+                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <!-- ── End Popup ───────────────────────────────────────── -->
+
+    </ui:VisualElement>
+</ui:UXML>
