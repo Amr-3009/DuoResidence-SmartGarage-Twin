@@ -15,16 +15,21 @@
 
             <!-- Nav Section -->
             <ui:VisualElement name="NavSection" class="nav-section">
-                <ui:Label text="NAVIGATION" class="nav-label" />
-
-                <ui:Button name="NavDashboard" class="nav-item nav-item--active">
-                    <ui:VisualElement class="nav-item__icon" />
-                    <ui:Label text="Dashboard" class="nav-item__label" />
-                </ui:Button>
+                <ui:Label text="MENU" class="nav-label" />
 
                 <ui:Button name="NavLoadScene" class="nav-item">
                     <ui:VisualElement class="nav-item__icon" />
                     <ui:Label text="Load Scene" class="nav-item__label" />
+                </ui:Button>
+
+                <ui:Button name="NavConnect" class="nav-item">
+                    <ui:VisualElement class="nav-item__icon" />
+                    <ui:Label text="Connect" class="nav-item__label" />
+                </ui:Button>
+
+                <ui:Button name="NavSettings" class="nav-item">
+                    <ui:VisualElement class="nav-item__icon" />
+                    <ui:Label text="Settings" class="nav-item__label" />
                 </ui:Button>
             </ui:VisualElement>
 
@@ -43,129 +48,178 @@
         <!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
         <ui:VisualElement name="MainContent" class="main-content">
 
-            <!-- TopBar -->
-            <ui:VisualElement name="TopBar" class="topbar">
-                <ui:Label name="PageTitle" text="Dashboard" class="page-title" />
-                <ui:VisualElement name="StatusPill" class="status-pill">
-                    <ui:VisualElement class="status-dot" />
-                    <ui:Label name="StatusText" text="Systems online" class="status-text" />
-                </ui:VisualElement>
+            <!-- Live camera viewport -->
+            <ui:VisualElement name="Viewport" class="viewport">
+                <ui:Label name="ViewportPlaceholder" text="Camera preview not connected — assign GarageCameraPreview RenderTexture to a camera's Target Texture" class="viewport__placeholder-label" style="white-space: normal; -unity-text-align: middle-center; width: 60%;" />
             </ui:VisualElement>
 
-            <!-- ─── DASHBOARD PANEL ─── -->
-            <ui:VisualElement name="DashboardPanel" class="content-area">
-
-                <!-- Stats Row -->
-                <ui:VisualElement name="StatsRow" class="stats-row">
-                    <ui:VisualElement class="stat-card">
-                        <ui:Label text="Scenes available" class="stat-label" />
-                        <ui:Label text="2 + 4 planned" class="stat-value" />
-                    </ui:VisualElement>
-                    <ui:VisualElement class="stat-card">
-                        <ui:Label text="Garage doors" class="stat-label" />
-                        <ui:Label text="3 units" class="stat-value" />
-                    </ui:VisualElement>
-                    <ui:VisualElement class="stat-card">
-                        <ui:Label text="Street lights" class="stat-label" />
-                        <ui:Label text="12 nodes" class="stat-value" />
-                    </ui:VisualElement>
-                    <ui:VisualElement class="stat-card">
-                        <ui:Label text="Uptime" class="stat-label" />
-                        <ui:Label text="99%" class="stat-value" />
-                    </ui:VisualElement>
-                </ui:VisualElement>
-
-                <!-- System Status Panel -->
-                <ui:VisualElement name="StatusPanel" class="status-panel">
-                    <ui:Label text="System status" class="status-panel__title" />
-
-                    <ui:VisualElement class="status-row">
-                        <ui:Label text="Smart garage" class="status-row__label" />
-                        <ui:Label name="Badge_Garage" text="Online" class="badge badge--online" />
-                    </ui:VisualElement>
-
-                    <ui:VisualElement class="status-row">
-                        <ui:Label text="Street lights" class="status-row__label" />
-                        <ui:Label name="Badge_Lights" text="Online" class="badge badge--online" />
-                    </ui:VisualElement>
-
-                    <ui:VisualElement class="status-row">
-                        <ui:Label text="IoT network" class="status-row__label" />
-                        <ui:Label name="Badge_IoT" text="Connected" class="badge badge--online" />
-                    </ui:VisualElement>
-                </ui:VisualElement>
-
-                <!-- Go to Scenes -->
-                <ui:Button name="GoToScenesBtn" text="Go to scenes ↗" class="goto-btn" />
-
+            <!-- Overlay badge -->
+            <ui:VisualElement class="viewport-badge">
+                <ui:VisualElement class="viewport-badge__dot" />
+                <ui:Label text="Smart Garage — Live View" class="viewport-badge__label" />
             </ui:VisualElement>
-            <!-- ─── END DASHBOARD PANEL ─── -->
 
-            <!-- ─── LOAD SCENE PANEL ─── -->
-            <ui:VisualElement name="LoadScenePanel" class="content-area" style="display: none;">
+            <!-- ─── LOAD SCENE POPUP ─── -->
+            <ui:VisualElement name="LoadScenePopup" class="popup-overlay">
+                <ui:VisualElement class="popup-card popup-card--wide">
 
-                <!-- Active Scenes -->
-                <ui:Label text="ACTIVE SCENES" class="section-label" />
-                <ui:VisualElement name="ActiveGrid" class="scene-grid">
+                    <ui:VisualElement class="popup-header">
+                        <ui:Label text="Load Scene" class="popup-title" />
+                        <ui:Button name="CloseLoadSceneBtn" text="✕" class="popup-close" />
+                    </ui:VisualElement>
 
-                    <ui:Button name="Card_Garage" class="scene-card">
-                        <ui:VisualElement class="scene-icon scene-icon--blue">
-                            <ui:VisualElement class="scene-icon__dot" />
+                    <ui:Label text="ACTIVE SCENES" class="popup-section-label" />
+                    <ui:VisualElement class="popup-grid">
+
+                        <ui:Button name="PopupCard_Garage" class="popup-card-item popup-card-item--active">
+                            <ui:VisualElement class="popup-icon popup-icon--blue">
+                                <ui:VisualElement class="popup-icon__dot" />
+                            </ui:VisualElement>
+                            <ui:Label text="Smart Garage" class="popup-card-item__name" />
+                            <ui:Label text="3 doors · Sensors active" class="popup-card-item__meta" />
+                        </ui:Button>
+
+                        <ui:Button name="PopupCard_StreetLights" class="popup-card-item">
+                            <ui:VisualElement class="popup-icon popup-icon--amber">
+                                <ui:VisualElement class="popup-icon__dot" />
+                            </ui:VisualElement>
+                            <ui:Label text="Street Lights" class="popup-card-item__name" />
+                            <ui:Label text="12 nodes · Auto mode" class="popup-card-item__meta" />
+                        </ui:Button>
+
+                    </ui:VisualElement>
+
+                    <ui:Label text="FUTURE SCENES" class="popup-section-label" />
+                    <ui:VisualElement class="popup-grid">
+
+                        <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                            <ui:VisualElement class="popup-icon popup-icon--gray">
+                                <ui:VisualElement class="popup-icon__dot" />
+                            </ui:VisualElement>
+                            <ui:Label text="Access Control" class="popup-card-item__name" />
+                            <ui:Label text="Coming soon" class="popup-card-item__meta" />
                         </ui:VisualElement>
-                        <ui:Label text="Smart Garage" class="scene-card__name" />
-                        <ui:Label text="3 doors · Sensors active" class="scene-card__meta" />
-                    </ui:Button>
 
-                    <ui:Button name="Card_StreetLights" class="scene-card">
-                        <ui:VisualElement class="scene-icon scene-icon--amber">
-                            <ui:VisualElement class="scene-icon__dot" />
+                        <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                            <ui:VisualElement class="popup-icon popup-icon--gray">
+                                <ui:VisualElement class="popup-icon__dot" />
+                            </ui:VisualElement>
+                            <ui:Label text="HVAC System" class="popup-card-item__name" />
+                            <ui:Label text="Coming soon" class="popup-card-item__meta" />
                         </ui:VisualElement>
-                        <ui:Label text="Street Lights" class="scene-card__name" />
-                        <ui:Label text="12 nodes · Auto mode" class="scene-card__meta" />
-                    </ui:Button>
+
+                        <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                            <ui:VisualElement class="popup-icon popup-icon--gray">
+                                <ui:VisualElement class="popup-icon__dot" />
+                            </ui:VisualElement>
+                            <ui:Label text="EV Chargers" class="popup-card-item__name" />
+                            <ui:Label text="Coming soon" class="popup-card-item__meta" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                            <ui:VisualElement class="popup-icon popup-icon--gray">
+                                <ui:VisualElement class="popup-icon__dot" />
+                            </ui:VisualElement>
+                            <ui:Label text="Security Cameras" class="popup-card-item__name" />
+                            <ui:Label text="Coming soon" class="popup-card-item__meta" />
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
 
                 </ui:VisualElement>
-
-                <!-- Future Scenes -->
-                <ui:Label text="FUTURE SCENES" class="section-label" />
-                <ui:VisualElement name="FutureGrid" class="scene-grid">
-
-                    <ui:VisualElement class="scene-card scene-card--locked">
-                        <ui:VisualElement class="scene-icon scene-icon--gray">
-                            <ui:VisualElement class="scene-icon__dot" />
-                        </ui:VisualElement>
-                        <ui:Label text="Access Control" class="scene-card__name" />
-                        <ui:Label text="Coming soon" class="scene-card__meta" />
-                    </ui:VisualElement>
-
-                    <ui:VisualElement class="scene-card scene-card--locked">
-                        <ui:VisualElement class="scene-icon scene-icon--gray">
-                            <ui:VisualElement class="scene-icon__dot" />
-                        </ui:VisualElement>
-                        <ui:Label text="HVAC System" class="scene-card__name" />
-                        <ui:Label text="Coming soon" class="scene-card__meta" />
-                    </ui:VisualElement>
-
-                    <ui:VisualElement class="scene-card scene-card--locked">
-                        <ui:VisualElement class="scene-icon scene-icon--gray">
-                            <ui:VisualElement class="scene-icon__dot" />
-                        </ui:VisualElement>
-                        <ui:Label text="EV Chargers" class="scene-card__name" />
-                        <ui:Label text="Coming soon" class="scene-card__meta" />
-                    </ui:VisualElement>
-
-                    <ui:VisualElement class="scene-card scene-card--locked">
-                        <ui:VisualElement class="scene-icon scene-icon--gray">
-                            <ui:VisualElement class="scene-icon__dot" />
-                        </ui:VisualElement>
-                        <ui:Label text="Security Cameras" class="scene-card__name" />
-                        <ui:Label text="Coming soon" class="scene-card__meta" />
-                    </ui:VisualElement>
-
-                </ui:VisualElement>
-
             </ui:VisualElement>
-            <!-- ─── END LOAD SCENE PANEL ─── -->
+            <!-- ─── END LOAD SCENE POPUP ─── -->
+
+            <!-- ─── CONNECT POPUP ─── -->
+            <ui:VisualElement name="ConnectPopup" class="popup-overlay">
+                <ui:VisualElement class="popup-card">
+
+                    <ui:VisualElement class="popup-header">
+                        <ui:Label text="Connect" class="popup-title" />
+                        <ui:Button name="CloseConnectBtn" text="✕" class="popup-close" />
+                    </ui:VisualElement>
+
+                    <ui:Label text="DEVICES &amp; NETWORK" class="popup-section-label" />
+
+                    <ui:VisualElement class="connect-row">
+                        <ui:VisualElement class="connect-row__left">
+                            <ui:VisualElement class="connect-row__dot connect-row__dot--online" />
+                            <ui:VisualElement>
+                                <ui:Label text="IoT Network" class="connect-row__label" />
+                                <ui:Label text="Connected" class="connect-row__status" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Button text="Disconnect" class="connect-btn" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="connect-row">
+                        <ui:VisualElement class="connect-row__left">
+                            <ui:VisualElement class="connect-row__dot connect-row__dot--online" />
+                            <ui:VisualElement>
+                                <ui:Label text="Smart Garage Controller" class="connect-row__label" />
+                                <ui:Label text="3 doors paired" class="connect-row__status" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Button text="Disconnect" class="connect-btn" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="connect-row">
+                        <ui:VisualElement class="connect-row__left">
+                            <ui:VisualElement class="connect-row__dot connect-row__dot--offline" />
+                            <ui:VisualElement>
+                                <ui:Label text="Street Light Controller" class="connect-row__label" />
+                                <ui:Label text="Not paired" class="connect-row__status" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Button text="Connect" class="connect-btn" />
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <!-- ─── END CONNECT POPUP ─── -->
+
+            <!-- ─── SETTINGS POPUP ─── -->
+            <ui:VisualElement name="SettingsPopup" class="popup-overlay">
+                <ui:VisualElement class="popup-card">
+
+                    <ui:VisualElement class="popup-header">
+                        <ui:Label text="Settings" class="popup-title" />
+                        <ui:Button name="CloseSettingsBtn" text="✕" class="popup-close" />
+                    </ui:VisualElement>
+
+                    <ui:Label text="GENERAL" class="popup-section-label" />
+
+                    <ui:VisualElement class="settings-row">
+                        <ui:Label text="Dark mode" class="settings-row__label" />
+                        <ui:Button name="ToggleDarkMode" class="settings-toggle settings-toggle--on">
+                            <ui:VisualElement class="settings-toggle__knob" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="settings-row">
+                        <ui:Label text="Auto-connect on launch" class="settings-row__label" />
+                        <ui:Button name="ToggleAutoConnect" class="settings-toggle settings-toggle--on">
+                            <ui:VisualElement class="settings-toggle__knob" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="settings-row settings-row--last">
+                        <ui:Label text="Show FPS counter" class="settings-row__label" />
+                        <ui:Button name="ToggleFPS" class="settings-toggle">
+                            <ui:VisualElement class="settings-toggle__knob" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:Label text="ABOUT" class="popup-section-label" style="margin-top: 12px;" />
+
+                    <ui:VisualElement class="settings-row settings-row--last">
+                        <ui:Label text="Version" class="settings-row__label" />
+                        <ui:Label text="v1.0.0" class="settings-row__value" />
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <!-- ─── END SETTINGS POPUP ─── -->
 
         </ui:VisualElement>
         <!-- ═══════════════════ END MAIN CONTENT ═══════════════════ -->

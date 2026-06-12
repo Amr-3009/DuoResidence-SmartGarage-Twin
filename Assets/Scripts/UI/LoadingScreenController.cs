@@ -52,6 +52,13 @@ public class LoadingScreenController : MonoBehaviour
 
     private void OnEnable()
     {
+        // UnityEngine.Cursor.visible/lockState are global and persist across scene loads.
+        // Always show the cursor on the loading screen — if the destination
+        // scene wants it hidden (e.g. the garage's fly camera), it will hide
+        // it again in its own Start().
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+
         var root = GetComponent<UIDocument>().rootVisualElement;
 
         _sceneNameLabel     = root.Q<Label>("SceneNameLabel");

@@ -1,10 +1,12 @@
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// DuoResidence — Main Menu Controller (UI Toolkit)
-/// Attach to the UIDocument GameObject in the MainMenu scene.
+/// Sidebar: Load Scene / Connect / Settings / Quit.
+/// Center: live camera viewport (RenderTexture).
+/// Each sidebar button (except Quit) opens a semi-transparent popup
+/// over the viewport.
 /// </summary>
 [RequireComponent(typeof(UIDocument))]
 public class MainMenuController : MonoBehaviour
@@ -17,56 +19,149 @@ public class MainMenuController : MonoBehaviour
     public string evChargersSceneName      = "EVChargers";
     public string securityCamerasSceneName = "SecurityCameras";
 
-    private VisualElement _dashboardPanel;
-    private VisualElement _loadScenePanel;
-    private Button        _navDashboard;
-    private Button        _navLoadScene;
-    private Label         _pageTitle;
+    [Header("Live Camera Preview")]
+    [Tooltip("RenderTexture fed by the garage camera (Assets/UI/GarageCameraPreview.renderTexture)")]
+    public RenderTexture cameraPreviewTexture;
+
+    // UI references
+    private VisualElement _viewport;
+    private Label         _viewportPlaceholder;
+
+    private Button _navLoadScene;
+    private Button _navConnect;
+    private Button _navSettings;
+
+    private VisualElement _loadScenePopup;
+    private VisualElement _connectPopup;
+    private VisualElement _settingsPopup;
 
     private void OnEnable()
     {
+        // UnityEngine.Cursor.visible/lockState are global and persist across scene loads.
+        // The garage scene's fly camera (Mover.cs) hides and locks the cursor
+        // by default, so make sure it's visible again whenever the menu shows.
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+
         var root = GetComponent<UIDocument>().rootVisualElement;
 
-        _dashboardPanel = root.Q<VisualElement>("DashboardPanel");
-        _loadScenePanel = root.Q<VisualElement>("LoadScenePanel");
-        _navDashboard   = root.Q<Button>("NavDashboard");
-        _navLoadScene   = root.Q<Button>("NavLoadScene");
-        _pageTitle      = root.Q<Label>("PageTitle");
+        // Viewport
+        _viewport            = root.Q<VisualElement>("Viewport");
+        _viewportPlaceholder = root.Q<Label>("ViewportPlaceholder");
+        ApplyCameraPreview();
 
-        _navDashboard.clicked                       += ShowDashboard;
-        _navLoadScene.clicked                       += ShowLoadScene;
-        root.Q<Button>("GoToScenesBtn").clicked     += ShowLoadScene;
-        root.Q<Button>("Card_Garage").clicked       += LoadGarageScene;
-        root.Q<Button>("Card_StreetLights").clicked += LoadStreetLightsScene;
-        root.Q<Button>("QuitButton").clicked        += QuitApplication;
+        // Nav buttons
+        _navLoadScene = root.Q<Button>("NavLoadScene");
+        _navConnect   = root.Q<Button>("NavConnect");
+        _navSettings  = root.Q<Button>("NavSettings");
 
-        ShowDashboard();
+        // Popups
+        _loadScenePopup = root.Q<VisualElement>("LoadScenePopup");
+        _connectPopup   = root.Q<VisualElement>("ConnectPopup");
+        _settingsPopup  = root.Q<VisualElement>("SettingsPopup");
+
+        // Nav -> popup wiring
+        _navLoadScene.clicked += () => TogglePopup(_loadScenePopup);
+        _navConnect.clicked   += () => TogglePopup(_connectPopup);
+        _navSettings.clicked  += () => TogglePopup(_settingsPopup);
+
+        // Close buttons
+        root.Q<Button>("CloseLoadSceneBtn").clicked += () => HidePopup(_loadScenePopup);
+        root.Q<Button>("CloseConnectBtn").clicked    += () => HidePopup(_connectPopup);
+        root.Q<Button>("CloseSettingsBtn").clicked   += () => HidePopup(_settingsPopup);
+
+        // Click outside card closes popup
+        RegisterOverlayClose(_loadScenePopup);
+        RegisterOverlayClose(_connectPopup);
+        RegisterOverlayClose(_settingsPopup);
+
+        // Scene cards inside Load Scene popup
+        root.Q<Button>("PopupCard_Garage").clicked       += LoadGarageScene;
+        root.Q<Button>("PopupCard_StreetLights").clicked += LoadStreetLightsScene;
+
+        // Settings toggles
+        WireToggle(root.Q<Button>("ToggleDarkMode"));
+        WireToggle(root.Q<Button>("ToggleAutoConnect"));
+        WireToggle(root.Q<Button>("ToggleFPS"));
+
+        // Quit
+        root.Q<Button>("QuitButton").clicked += QuitApplication;
     }
 
-    public void ShowDashboard()
+    private void Update()
     {
-        _dashboardPanel.style.display = DisplayStyle.Flex;
-        _loadScenePanel.style.display = DisplayStyle.None;
-        _pageTitle.text = "Dashboard";
-        _navDashboard.AddToClassList("nav-item--active");
-        _navLoadScene.RemoveFromClassList("nav-item--active");
+        // Belt-and-braces: keep the cursor visible while the menu is active,
+        // in case any other script tries to hide/lock it during this frame.
+        if (UnityEngine.Cursor.visible == false || UnityEngine.Cursor.lockState != CursorLockMode.None)
+        {
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = true;
+        }
     }
 
-    public void ShowLoadScene()
+    // ─── Camera Preview ──────────────────────────────────────────
+
+    private void ApplyCameraPreview()
     {
-        _dashboardPanel.style.display = DisplayStyle.None;
-        _loadScenePanel.style.display = DisplayStyle.Flex;
-        _pageTitle.text = "Load Scene";
-        _navLoadScene.AddToClassList("nav-item--active");
-        _navDashboard.RemoveFromClassList("nav-item--active");
+        if (cameraPreviewTexture != null)
+        {
+            _viewport.style.backgroundImage =
+                new StyleBackground(Background.FromRenderTexture(cameraPreviewTexture));
+
+            if (_viewportPlaceholder != null)
+                _viewportPlaceholder.style.display = DisplayStyle.None;
+        }
+        else
+        {
+            if (_viewportPlaceholder != null)
+                _viewportPlaceholder.style.display = DisplayStyle.Flex;
+        }
     }
 
-    // Routes all scene loads through the loading screen
+    // ─── Popups ────────────────────────────────────────────────
+
+    private void TogglePopup(VisualElement popup)
+    {
+        bool isVisible = popup.ClassListContains("popup-overlay--visible");
+
+        // Close all popups first
+        HidePopup(_loadScenePopup);
+        HidePopup(_connectPopup);
+        HidePopup(_settingsPopup);
+
+        // Toggle: if it was already open, leave it closed; otherwise open it
+        if (!isVisible)
+            ShowPopup(popup);
+    }
+
+    private void ShowPopup(VisualElement popup) => popup.AddToClassList("popup-overlay--visible");
+    private void HidePopup(VisualElement popup) => popup.RemoveFromClassList("popup-overlay--visible");
+
+    private void RegisterOverlayClose(VisualElement overlay)
+    {
+        overlay.RegisterCallback<ClickEvent>(evt =>
+        {
+            if (evt.target == overlay) HidePopup(overlay);
+        });
+    }
+
+    // ─── Settings Toggles ────────────────────────────────────────
+
+    private void WireToggle(Button toggle)
+    {
+        if (toggle == null) return;
+        toggle.clicked += () => toggle.ToggleInClassList("settings-toggle--on");
+    }
+
+    // ─── Scene Loading (routed through LoadingScreen) ───────────
+
     private void LoadGarageScene()
         => LoadingScreenController.LoadScene(garageSceneName, "Smart Garage", "blue");
 
     private void LoadStreetLightsScene()
         => LoadingScreenController.LoadScene(streetLightsSceneName, "Street Lights", "amber");
+
+    // ─── Quit ───────────────────────────────────────────────────
 
     private void QuitApplication()
     {
@@ -75,15 +170,5 @@ public class MainMenuController : MonoBehaviour
 #else
         Application.Quit();
 #endif
-    }
-
-    public void SetBadgeText(string badgeName, string text, bool isWarning = false)
-    {
-        var root  = GetComponent<UIDocument>().rootVisualElement;
-        var badge = root.Q<Label>(badgeName);
-        if (badge == null) return;
-        badge.text = text;
-        badge.RemoveFromClassList(isWarning ? "badge--online" : "badge--warning");
-        badge.AddToClassList(isWarning      ? "badge--warning" : "badge--online");
     }
 }

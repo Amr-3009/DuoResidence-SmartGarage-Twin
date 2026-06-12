@@ -346,6 +346,7 @@ GameObject:
   - component: {fileID: 843517334}
   - component: {fileID: 843517333}
   - component: {fileID: 843517332}
+  - component: {fileID: 843517335}
   m_Layer: 0
   m_Name: MainMenu_UI
   m_TagString: Untagged
@@ -371,6 +372,7 @@ MonoBehaviour:
   hvacSceneName: HVACSystem
   evChargersSceneName: EVChargers
   securityCamerasSceneName: SecurityCameras
+  cameraPreviewTexture: {fileID: 8400000, guid: 73786081350878346a6b004ce65a9eab, type: 2}
 --- !u!114 &843517333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409,6 +411,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &843517335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 843517331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae0b001a791114a4d979d3cdf9d5922f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GarageScenePreviewLoader
+  previewSceneName: GarageTwin_Phase1
+  previewTexture: {fileID: 8400000, guid: 73786081350878346a6b004ce65a9eab, type: 2}
+  previewCameraName: PreviewCamera
+  disableOtherCameras: 1
+  disablePreviewHUD: 1
+  disablePreviewAudioListener: 1
+  disablePreviewEventSystem: 1
+  disablePreviewCanvasRaycasters: 1
 --- !u!1 &1688518979
 GameObject:
   m_ObjectHideFlags: 0
