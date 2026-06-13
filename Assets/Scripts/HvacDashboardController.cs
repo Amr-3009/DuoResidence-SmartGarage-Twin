@@ -23,6 +23,21 @@ public class HvacDashboardController : MonoBehaviour
     [SerializeField] private Color cautionColor = Color.yellow;
     [SerializeField] private Color dangerColor = Color.red;
 
+    // ── Read-only accessors for the UI Toolkit dashboard bridge ──────
+    // (GarageDashboardsController polls these to mirror live values
+    //  into the new themed dashboard without touching the MQTT logic below.)
+    public Slider Co2Slider => co2Slider;
+    public Image  Co2SliderFill => co2SliderFill;
+    public TextMeshProUGUI Co2ValueText => co2ValueText;
+    public float MinCO2Limits => minCO2Limits;
+    public float MaxCO2Limits => maxCO2Limits;
+
+    public Slider NoSlider => noSlider;
+    public Image  NoSliderFill => noSliderFill;
+    public TextMeshProUGUI NoValueText => noValueText;
+    public float MinNOLimits => minNOLimits;
+    public float MaxNOLimits => maxNOLimits;
+
     void Start()
     {
         // Enforce exact mathematical boundaries on the slider UI components
