@@ -1,0 +1,270 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:Style src="project://database/Assets/UI/GarageHUD.uss" />
+
+    <ui:VisualElement name="HUDRoot" class="hud-root">
+
+        <!-- ── Top Bar ─────────────────────────────────────────── -->
+        <ui:VisualElement name="HUDTopBar" class="hud-topbar">
+
+            <!-- Left: Hamburger menu button -->
+            <ui:VisualElement class="hud-topbar__left">
+                <ui:Button name="HamburgerMenuBtn" class="hamburger-btn">
+                    <ui:VisualElement class="hamburger-btn__bar" />
+                    <ui:VisualElement class="hamburger-btn__bar" />
+                    <ui:VisualElement class="hamburger-btn__bar" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <!-- Right: Scene pill -->
+            <ui:VisualElement class="hud-topbar__right">
+                <ui:VisualElement class="scene-pill">
+                    <ui:VisualElement class="scene-pill__dot" />
+                    <ui:Label text="Smart Garage" class="scene-pill__label" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+        <!-- ── End Top Bar ─────────────────────────────────────── -->
+
+        <!-- ── Hamburger Dropdown Menu ───────────────────────────── -->
+        <ui:VisualElement name="HamburgerMenu" class="hud-menu-dropdown">
+
+            <ui:Button name="MenuItem_MainMenu" class="hud-menu-item">
+                <ui:Label text="←" class="hud-menu-item__icon hud-menu-item__icon--arrow" />
+                <ui:Label text="Main Menu" class="hud-menu-item__label" />
+            </ui:Button>
+
+            <ui:VisualElement class="hud-menu-divider" />
+
+            <ui:Button name="MenuItem_Dashboards" class="hud-menu-item">
+                <ui:VisualElement class="hud-menu-item__icon-box" />
+                <ui:Label text="Dashboards" class="hud-menu-item__label" />
+            </ui:Button>
+
+            <ui:Button name="MenuItem_Scenes" class="hud-menu-item">
+                <ui:VisualElement class="hud-menu-item__icon-box" />
+                <ui:Label text="Scenes" class="hud-menu-item__label" />
+            </ui:Button>
+
+        </ui:VisualElement>
+        <!-- ── End Hamburger Dropdown Menu ──────────────────────── -->
+
+        <!-- ── Load Scene Popup Overlay ───────────────────────── -->
+        <ui:VisualElement name="PopupOverlay" class="popup-overlay">
+            <ui:VisualElement class="popup-card">
+
+                <!-- Header -->
+                <ui:VisualElement class="popup-header">
+                    <ui:Label text="Load Scene" class="popup-title" />
+                    <ui:Button name="ClosePopupBtn" text="✕" class="popup-close" />
+                </ui:VisualElement>
+
+                <!-- Active Scenes -->
+                <ui:Label text="ACTIVE SCENES" class="popup-section-label" />
+                <ui:VisualElement class="popup-grid">
+
+                    <ui:Button name="PopupCard_Garage" class="popup-card-item popup-card-item--active">
+                        <ui:VisualElement class="popup-icon popup-icon--blue">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Smart Garage" class="popup-card-item__name" />
+                        <ui:Label text="Current scene" class="popup-card-item__meta" />
+                    </ui:Button>
+
+                    <ui:Button name="PopupCard_StreetLights" class="popup-card-item">
+                        <ui:VisualElement class="popup-icon popup-icon--amber">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Street Lights" class="popup-card-item__name" />
+                        <ui:Label text="12 nodes · Auto mode" class="popup-card-item__meta" />
+                    </ui:Button>
+
+                </ui:VisualElement>
+
+                <!-- Future Scenes -->
+                <ui:Label text="FUTURE SCENES" class="popup-section-label" />
+                <ui:VisualElement class="popup-grid">
+
+                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                        <ui:VisualElement class="popup-icon popup-icon--gray">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Access Control" class="popup-card-item__name" />
+                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                        <ui:VisualElement class="popup-icon popup-icon--gray">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="HVAC System" class="popup-card-item__name" />
+                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                        <ui:VisualElement class="popup-icon popup-icon--gray">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="EV Chargers" class="popup-card-item__name" />
+                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                        <ui:VisualElement class="popup-icon popup-icon--gray">
+                            <ui:VisualElement class="popup-icon__dot" />
+                        </ui:VisualElement>
+                        <ui:Label text="Security Cameras" class="popup-card-item__name" />
+                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <!-- ── End Load Scene Popup ─────────────────────────────── -->
+
+        <!-- ── Dashboards Popup Overlay ─────────────────────────── -->
+        <ui:VisualElement name="DashboardsOverlay" class="popup-overlay">
+            <ui:VisualElement class="popup-card popup-card--dashboards">
+
+                <!-- Header -->
+                <ui:VisualElement class="popup-header">
+                    <ui:Label text="Dashboards" class="popup-title" />
+                    <ui:Button name="CloseDashboardsBtn" text="✕" class="popup-close" />
+                </ui:VisualElement>
+
+                <!-- Tab Bar -->
+                <ui:VisualElement name="DashTabBar" class="dash-tabbar">
+                    <ui:Button name="Tab_Parking" class="dash-tab dash-tab--active" text="Parking" />
+                    <ui:Button name="Tab_HVAC" class="dash-tab" text="HVAC" />
+                    <ui:Button name="Tab_Fans" class="dash-tab" text="Fans" />
+                    <ui:Button name="Tab_CCTV" class="dash-tab" text="CCTV" />
+                </ui:VisualElement>
+
+                <!-- ═══ PARKING TAB ═══ -->
+                <ui:VisualElement name="Tab_Parking_Content" class="dash-tab-content">
+
+                    <ui:VisualElement class="dash-summary-row">
+                        <ui:Label name="FacilityStatusLabel" text="MONITORING ACTIVE" class="dash-status-pill dash-status-pill--ok" />
+                        <ui:Label name="CapacityPercentLabel" text="0% Full" class="dash-capacity-pct" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="dash-progress-track">
+                        <ui:VisualElement name="CapacityProgressFill" class="dash-progress-fill" />
+                    </ui:VisualElement>
+
+                    <ui:Label name="TotalCarsLabel" text="Total Cars Entered This Session: 0" class="dash-meta-label" />
+
+                    <ui:VisualElement class="dash-lanes-row">
+
+                        <ui:VisualElement class="dash-lane-col">
+                            <ui:Label name="LaneA_StatusLabel" text="Lane A: 0 / 40 Occupied" class="dash-lane-label" />
+                            <ui:VisualElement name="LaneA_Grid" class="dash-parking-grid" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="dash-lane-col">
+                            <ui:Label name="LaneB_StatusLabel" text="Lane B: 0 / 40 Occupied" class="dash-lane-label" />
+                            <ui:VisualElement name="LaneB_Grid" class="dash-parking-grid" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="dash-lane-col">
+                            <ui:Label name="LaneC_StatusLabel" text="Lane C: 0 / 40 Occupied" class="dash-lane-label" />
+                            <ui:VisualElement name="LaneC_Grid" class="dash-parking-grid" />
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+
+                <!-- ═══ HVAC TAB ═══ -->
+                <ui:VisualElement name="Tab_HVAC_Content" class="dash-tab-content" style="display: none;">
+
+                    <ui:Label text="CO2 LEVELS" class="popup-section-label" />
+                    <ui:VisualElement class="dash-progress-track">
+                        <ui:VisualElement name="CO2ProgressFill" class="dash-progress-fill" />
+                    </ui:VisualElement>
+                    <ui:Label name="CO2ValueLabel" text="400 PPM" class="dash-value-label" />
+
+                    <ui:Label text="NO LEVELS" class="popup-section-label" style="margin-top: 18px;" />
+                    <ui:VisualElement class="dash-progress-track">
+                        <ui:VisualElement name="NOProgressFill" class="dash-progress-fill" />
+                    </ui:VisualElement>
+                    <ui:Label name="NOValueLabel" text="0.0 PPM" class="dash-value-label" />
+
+                </ui:VisualElement>
+
+                <!-- ═══ FANS TAB ═══ -->
+                <ui:VisualElement name="Tab_Fans_Content" class="dash-tab-content" style="display: none;">
+
+                    <ui:VisualElement class="dash-fan-row">
+                        <ui:VisualElement class="dash-fan-card">
+                            <ui:Label text="BIG FAN" class="popup-section-label" />
+                            <ui:Label name="BigFanRpmLabel" text="0 RPM" class="dash-value-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="dash-fan-card">
+                            <ui:Label text="SMALL FAN" class="popup-section-label" />
+                            <ui:Label name="SmallFanRpmLabel" text="0 RPM" class="dash-value-label" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:Label text="MANUAL OVERRIDE" class="popup-section-label" style="margin-top: 18px;" />
+                    <ui:VisualElement class="dash-fan-controls">
+                        <ui:DropdownField name="DurationDropdown" label="" index="0" choices="20s,40s,1 min" class="dash-dropdown" />
+                        <ui:Button name="IncreaseRpmBtn" text="INCREASE VENTILATION" class="dash-action-btn" />
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+
+                <!-- ═══ CCTV TAB ═══ -->
+                <ui:VisualElement name="Tab_CCTV_Content" class="dash-tab-content" style="display: none;">
+
+                    <ui:VisualElement class="dash-cctv-top">
+                        <ui:Label name="CamLabel" text="SYSTEM OFFLINE" class="dash-status-pill dash-status-pill--off" />
+                        <ui:Button name="SessionBtn" text="START WATCHING" class="dash-action-btn dash-action-btn--green" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement name="CCTVStreamDisplay" class="dash-cctv-stream" />
+
+                    <ui:VisualElement class="dash-cctv-buttons">
+                        <ui:Button name="Btn_Overview" text="Overview" class="dash-cam-btn" />
+                        <ui:Button name="Btn_LaneA" text="Lane A" class="dash-cam-btn" />
+                        <ui:Button name="Btn_LaneB" text="Lane B" class="dash-cam-btn" />
+                        <ui:Button name="Btn_LaneC" text="Lane C" class="dash-cam-btn" />
+                        <ui:Button name="Btn_Entrance" text="Entrance" class="dash-cam-btn" />
+                        <ui:Button name="Btn_Exit" text="Exit" class="dash-cam-btn" />
+                    </ui:VisualElement>
+
+                    <ui:Label text="CALIBRATION" class="popup-section-label" style="margin-top: 14px;" />
+                    <ui:VisualElement class="dash-calib-row">
+
+                        <ui:VisualElement class="dash-calib-col">
+                            <ui:Label text="Lane A" class="dash-calib-label" />
+                            <ui:Slider name="SliderA_Zoom" label="Zoom" low-value="0.5" high-value="5" value="2.5" class="dash-calib-slider" />
+                            <ui:Slider name="SliderA_X" label="X" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
+                            <ui:Slider name="SliderA_Y" label="Y" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="dash-calib-col">
+                            <ui:Label text="Lane B" class="dash-calib-label" />
+                            <ui:Slider name="SliderB_Zoom" label="Zoom" low-value="0.5" high-value="5" value="2.5" class="dash-calib-slider" />
+                            <ui:Slider name="SliderB_X" label="X" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
+                            <ui:Slider name="SliderB_Y" label="Y" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="dash-calib-col">
+                            <ui:Label text="Lane C" class="dash-calib-label" />
+                            <ui:Slider name="SliderC_Zoom" label="Zoom" low-value="0.5" high-value="5" value="2.5" class="dash-calib-slider" />
+                            <ui:Slider name="SliderC_X" label="X" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
+                            <ui:Slider name="SliderC_Y" label="Y" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <!-- ── End Dashboards Popup ─────────────────────────────── -->
+
+    </ui:VisualElement>
+</ui:UXML>

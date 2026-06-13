@@ -24,6 +24,14 @@ public class FanDashboardController : MonoBehaviour
     private bool _isOverrideActive = false;
     private string _originalButtonText = "INCREASE VENTILATION";
 
+    // ── Read-only accessors for the UI Toolkit dashboard bridge ──────
+    public TextMeshProUGUI BigFanRpmText => bigFanRpmText;
+    public TextMeshProUGUI SmallFanRpmText => smallFanRpmText;
+    public Button IncreaseRpmButton => increaseRpmButton;
+    public TMP_Dropdown DurationDropdown => durationDropdown;
+    public TextMeshProUGUI ButtonLabelText => buttonLabelText;
+    public bool IsOverrideActive => _isOverrideActive;
+
     void Start()
     {
         // Cache the original button label if it isn't explicitly linked
@@ -83,8 +91,9 @@ public class FanDashboardController : MonoBehaviour
 
     /// <summary>
     /// Evaluates current speeds, locks the UI, and publishes commands over the network.
+    /// Exposed publicly so the UI Toolkit dashboard's button can trigger the same override.
     /// </summary>
-    private void ExecuteVentilationOverride()
+    public void ExecuteVentilationOverride()
     {
         if (_isOverrideActive || MQTTConnectionManager.Instance == null) return;
 
