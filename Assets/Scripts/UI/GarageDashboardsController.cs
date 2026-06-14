@@ -6,7 +6,8 @@ using TMPro;
 
 using UIButton = UnityEngine.UIElements.Button;
 using UISlider = UnityEngine.UIElements.Slider;
-using UGUISlider = UnityEngine.UI.Slider;
+
+
 
 /// <summary>
 /// DuoResidence — Garage Dashboards Controller (UI Toolkit)
@@ -64,17 +65,21 @@ public class GarageDashboardsController : MonoBehaviour
     private Label _camLabel;
     private UIButton _sessionBtn;
     private VisualElement _cctvStream;
-    private UIButton _btnOverview, _btnLaneA, _btnLaneB, _btnLaneC, _btnEntrance, _btnExit;
+    private UIButton _btnOverview, _btnEntrance, _btnExit, _btnResetView;
     private UIButton[] _camButtons;
+    private UISlider _sliderZoom, _sliderPanX, _sliderPanY;
+    private bool _cctvSlidersWired;
 
-    private UISlider _sliderA_Zoom, _sliderA_X, _sliderA_Y;
-    private UISlider _sliderB_Zoom, _sliderB_X, _sliderB_Y;
-    private UISlider _sliderC_Zoom, _sliderC_X, _sliderC_Y;
 
+    // Tab buttons and their corresponding content panels (Parking/HVAC/Fans/CCTV).
     private UIButton[] _tabButtons;
     private VisualElement[] _tabContents;
 
-    private void Awake()
+    /// <summary>
+    /// Caches references to every UI Toolkit element used by the dashboards popup,
+    /// wires up the tab buttons, and builds the parking grid on startup.
+    /// </summary>
+private void Awake()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
 
@@ -115,14 +120,14 @@ public class GarageDashboardsController : MonoBehaviour
         _laneCGrid = root.Q<VisualElement>("LaneC_Grid");
 
         // ── HVAC ────────────────────────────────────────────────────
-        _co2Fill = root.Q<VisualElement>("CO2ProgressFill");
-        _noFill  = root.Q<VisualElement>("NOProgressFill");
+        _co2Fill       = root.Q<VisualElement>("CO2ProgressFill");
+        _noFill        = root.Q<VisualElement>("NOProgressFill");
         _co2ValueLabel = root.Q<Label>("CO2ValueLabel");
         _noValueLabel  = root.Q<Label>("NOValueLabel");
 
         // ── Fans ────────────────────────────────────────────────────
-        _bigFanLabel   = root.Q<Label>("BigFanRpmLabel");
-        _smallFanLabel = root.Q<Label>("SmallFanRpmLabel");
+        _bigFanLabel      = root.Q<Label>("BigFanRpmLabel");
+        _smallFanLabel    = root.Q<Label>("SmallFanRpmLabel");
         _durationDropdown = root.Q<DropdownField>("DurationDropdown");
         _increaseRpmBtn   = root.Q<UIButton>("IncreaseRpmBtn");
 
@@ -131,28 +136,24 @@ public class GarageDashboardsController : MonoBehaviour
         _sessionBtn  = root.Q<UIButton>("SessionBtn");
         _cctvStream  = root.Q<VisualElement>("CCTVStreamDisplay");
         _btnOverview = root.Q<UIButton>("Btn_Overview");
-        _btnLaneA    = root.Q<UIButton>("Btn_LaneA");
-        _btnLaneB    = root.Q<UIButton>("Btn_LaneB");
-        _btnLaneC    = root.Q<UIButton>("Btn_LaneC");
         _btnEntrance = root.Q<UIButton>("Btn_Entrance");
         _btnExit     = root.Q<UIButton>("Btn_Exit");
-        _camButtons  = new[] { _btnOverview, _btnLaneA, _btnLaneB, _btnLaneC, _btnEntrance, _btnExit };
-
-        _sliderA_Zoom = root.Q<UISlider>("SliderA_Zoom");
-        _sliderA_X    = root.Q<UISlider>("SliderA_X");
-        _sliderA_Y    = root.Q<UISlider>("SliderA_Y");
-        _sliderB_Zoom = root.Q<UISlider>("SliderB_Zoom");
-        _sliderB_X    = root.Q<UISlider>("SliderB_X");
-        _sliderB_Y    = root.Q<UISlider>("SliderB_Y");
-        _sliderC_Zoom = root.Q<UISlider>("SliderC_Zoom");
-        _sliderC_X    = root.Q<UISlider>("SliderC_X");
-        _sliderC_Y    = root.Q<UISlider>("SliderC_Y");
+        _btnResetView = root.Q<UIButton>("Btn_ResetView");
+        _camButtons  = new[] { _btnOverview, _btnEntrance, _btnExit };
+        _sliderZoom  = root.Q<UISlider>("SliderOverview_Zoom");
+        _sliderPanX  = root.Q<UISlider>("SliderOverview_X");
+        _sliderPanY  = root.Q<UISlider>("SliderOverview_Y");
 
         BuildParkingGrid();
         SelectTab(0);
     }
 
-    private void Start()
+    /// <summary>
+    /// Locates the original UGUI dashboard controllers (HVAC, Fan, CCTV, Twin),
+    /// hides their canvases so only this UI Toolkit popup renders, subscribes to
+    /// MQTT telemetry, and wires up the Fan and CCTV controls to those controllers.
+    /// </summary>
+private void Start()
     {
         // ── Locate original controllers, disable their canvases ─────
         _hvac = FindObjectOfType<HvacDashboardController>(true);
@@ -182,9 +183,6 @@ public class GarageDashboardsController : MonoBehaviour
 
         // ── CCTV: wire camera buttons ────────────────────────────────
         WireCamButton(_btnOverview, "OVERVIEW");
-        WireCamButton(_btnLaneA,    "LANE_A");
-        WireCamButton(_btnLaneB,    "LANE_B");
-        WireCamButton(_btnLaneC,    "LANE_C");
         WireCamButton(_btnEntrance, "ENTRANCE");
         WireCamButton(_btnExit,     "EXIT");
         SetActiveCamButton(_btnOverview);
@@ -192,18 +190,16 @@ public class GarageDashboardsController : MonoBehaviour
         if (_sessionBtn != null)
             _sessionBtn.clicked += () => _cctv?.ToggleMasterSession();
 
-        // ── CCTV: wire calibration sliders (range + two-way push) ────
-        WireCalibSlider(_sliderA_Zoom, () => _cctv?.sliderA_Zoom);
-        WireCalibSlider(_sliderA_X,    () => _cctv?.sliderA_X);
-        WireCalibSlider(_sliderA_Y,    () => _cctv?.sliderA_Y);
-        WireCalibSlider(_sliderB_Zoom, () => _cctv?.sliderB_Zoom);
-        WireCalibSlider(_sliderB_X,    () => _cctv?.sliderB_X);
-        WireCalibSlider(_sliderB_Y,    () => _cctv?.sliderB_Y);
-        WireCalibSlider(_sliderC_Zoom, () => _cctv?.sliderC_Zoom);
-        WireCalibSlider(_sliderC_X,    () => _cctv?.sliderC_X);
-        WireCalibSlider(_sliderC_Y,    () => _cctv?.sliderC_Y);
+        if (_btnResetView != null)
+            _btnResetView.clicked += () => _cctv?.ResetSlidersAndTransform();
+
+        WireCctvSliders();
     }
 
+    /// <summary>
+    /// Unsubscribes from MQTT telemetry to avoid leaking the event handler
+    /// when this object is destroyed.
+    /// </summary>
     private void OnDestroy()
     {
         MQTTConnectionManager.OnTelemetryMessageReceived -= OnTelemetry;
@@ -213,6 +209,11 @@ public class GarageDashboardsController : MonoBehaviour
     // Canvas hiding
     // ─────────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Turns off the Canvas and GraphicRaycaster on an original UGUI dashboard
+    /// so it stops rendering/blocking input, while leaving its GameObject and
+    /// scripts active (their logic keeps running in the background).
+    /// </summary>
     private void DisableCanvas(Component c)
     {
         if (c == null) return;
@@ -226,9 +227,14 @@ public class GarageDashboardsController : MonoBehaviour
     // Popup open/close + Tabs
     // ─────────────────────────────────────────────────────────────────
 
+    // Shows / hides the dashboards popup overlay via USS class toggling.
     public void Open()  => _overlay.AddToClassList("popup-overlay--visible");
     public void Close() => _overlay.RemoveFromClassList("popup-overlay--visible");
 
+    /// <summary>
+    /// Switches the visible tab: shows the content panel matching <paramref name="index"/>
+    /// and highlights its tab button, hiding/unhighlighting all the others.
+    /// </summary>
     private void SelectTab(int index)
     {
         for (int i = 0; i < _tabButtons.Length; i++)
@@ -244,6 +250,10 @@ public class GarageDashboardsController : MonoBehaviour
     // Parking / Wall grid
     // ─────────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Builds all three parking lane grids (A, B, C) and refreshes the
+    /// capacity summary labels/progress bar.
+    /// </summary>
     private void BuildParkingGrid()
     {
         BuildLane("A", _laneAGrid);
@@ -252,6 +262,11 @@ public class GarageDashboardsController : MonoBehaviour
         RefreshParkingSummary();
     }
 
+    /// <summary>
+    /// Creates one tile per slot for the given lane (e.g. A01..A40), starting
+    /// in the vacant state, and registers each tile in <see cref="_tileMap"/>
+    /// so it can be updated later from telemetry.
+    /// </summary>
     private void BuildLane(string lane, VisualElement grid)
     {
         if (grid == null) return;
@@ -268,6 +283,11 @@ public class GarageDashboardsController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// MQTT telemetry handler. Updates the "total cars entered" label when the
+    /// entrance-count topic arrives, and updates the matching parking tile's
+    /// occupied/vacant state (plus the lane summary) when a slot-status topic arrives.
+    /// </summary>
     private void OnTelemetry(string topic, string payload)
     {
         // Total cars (matches TwinSyncManager's traffic topic)
@@ -297,6 +317,11 @@ public class GarageDashboardsController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Recomputes occupied counts for lanes A/B/C from <see cref="_capacityMap"/>,
+    /// then updates the lane status labels, the capacity progress bar/percentage,
+    /// and the overall "FACILITY FULL" / "MONITORING ACTIVE" status pill.
+    /// </summary>
     private void RefreshParkingSummary()
     {
         int occA = 0, occB = 0, occC = 0;
@@ -339,6 +364,10 @@ public class GarageDashboardsController : MonoBehaviour
     // Live polling: HVAC / Fans / CCTV
     // ─────────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// While the dashboards popup is visible, refreshes the HVAC, Fan and CCTV
+    /// tabs every frame by polling the original (hidden) controllers.
+    /// </summary>
     private void Update()
     {
         if (!_overlay.ClassListContains("popup-overlay--visible")) return;
@@ -348,6 +377,8 @@ public class GarageDashboardsController : MonoBehaviour
         UpdateCctvTab();
     }
 
+    // Mirrors the hidden HvacDashboardController's CO2/NO slider values, fill
+    // colors and text labels onto this UI's CO2/NO progress bars and labels.
     private void UpdateHvacTab()
     {
         if (_hvac == null) return;
@@ -373,6 +404,8 @@ public class GarageDashboardsController : MonoBehaviour
             _noValueLabel.text = _hvac.NoValueText.text;
     }
 
+    // Mirrors the hidden FanDashboardController's RPM labels, button text and
+    // interactable states onto this UI's fan labels, button and dropdown.
     private void UpdateFanTab()
     {
         if (_fan == null) return;
@@ -393,6 +426,8 @@ public class GarageDashboardsController : MonoBehaviour
             _durationDropdown.SetEnabled(_fan.DurationDropdown.interactable);
     }
 
+    // Mirrors the hidden CCTVClient's camera label, session button text/state
+    // and live stream texture onto this UI, then refreshes the calibration sliders.
     private void UpdateCctvTab()
     {
         if (_cctv == null) return;
@@ -417,13 +452,79 @@ public class GarageDashboardsController : MonoBehaviour
         {
             _cctvStream.style.backgroundImage = new StyleBackground(Background.FromTexture2D((Texture2D)_cctv.streamDisplay.texture));
         }
+
+        UpdateCctvCalibration();
     }
 
     // ─────────────────────────────────────────────────────────────────
     // Wiring helpers
     // ─────────────────────────────────────────────────────────────────
 
-    private void WireCamButton(UIButton btn, string mode)
+    /// <summary>
+    /// One-time hookup (guarded by <see cref="_cctvSlidersWired"/>) that forwards
+    /// changes on this UI's zoom/pan sliders to CCTVClient's corresponding sliders.
+    /// </summary>
+    private void WireCctvSliders()
+    {
+        if (_cctvSlidersWired || _cctv == null) return;
+        _cctvSlidersWired = true;
+
+        if (_sliderZoom != null && _cctv.sliderOverview_Zoom != null)
+            _sliderZoom.RegisterValueChangedCallback(evt => _cctv.sliderOverview_Zoom.value = evt.newValue);
+
+        if (_sliderPanX != null && _cctv.sliderOverview_X != null)
+            _sliderPanX.RegisterValueChangedCallback(evt => _cctv.sliderOverview_X.value = evt.newValue);
+
+        if (_sliderPanY != null && _cctv.sliderOverview_Y != null)
+            _sliderPanY.RegisterValueChangedCallback(evt => _cctv.sliderOverview_Y.value = evt.newValue);
+    }
+
+    /// <summary>
+    /// Syncs this UI's zoom/pan-X/pan-Y sliders (range, value, enabled state)
+    /// with CCTVClient's sliders, and mirrors the reset-view button's enabled state.
+    /// </summary>
+    private void UpdateCctvCalibration()
+    {
+        if (_cctv == null) return;
+
+        var zoom = _cctv.sliderOverview_Zoom;
+        var panX = _cctv.sliderOverview_X;
+        var panY = _cctv.sliderOverview_Y;
+
+        if (_sliderZoom != null && zoom != null)
+        {
+            _sliderZoom.lowValue  = zoom.minValue;
+            _sliderZoom.highValue = zoom.maxValue;
+            _sliderZoom.SetValueWithoutNotify(zoom.value);
+            _sliderZoom.SetEnabled(zoom.interactable);
+        }
+
+        if (_sliderPanX != null && panX != null)
+        {
+            _sliderPanX.lowValue  = panX.minValue;
+            _sliderPanX.highValue = panX.maxValue;
+            _sliderPanX.SetValueWithoutNotify(panX.value);
+            _sliderPanX.SetEnabled(panX.interactable);
+        }
+
+        if (_sliderPanY != null && panY != null)
+        {
+            _sliderPanY.lowValue  = panY.minValue;
+            _sliderPanY.highValue = panY.maxValue;
+            _sliderPanY.SetValueWithoutNotify(panY.value);
+            _sliderPanY.SetEnabled(panY.interactable);
+        }
+
+        if (_btnResetView != null && _cctv.btnResetView != null)
+            _btnResetView.SetEnabled(_cctv.btnResetView.interactable);
+    }
+
+    
+    /// <summary>
+    /// Hooks up a camera-select button: clicking it tells CCTVClient to switch
+    /// to <paramref name="mode"/> and marks the button as the active camera button.
+    /// </summary>
+private void WireCamButton(UIButton btn, string mode)
     {
         if (btn == null) return;
         btn.clicked += () =>
@@ -433,6 +534,8 @@ public class GarageDashboardsController : MonoBehaviour
         };
     }
 
+    // Applies the "active" highlight style to the given camera button and
+    // removes it from the others.
     private void SetActiveCamButton(UIButton active)
     {
         foreach (var b in _camButtons)
@@ -441,24 +544,5 @@ public class GarageDashboardsController : MonoBehaviour
             if (b == active) b.AddToClassList("dash-cam-btn--active");
             else b.RemoveFromClassList("dash-cam-btn--active");
         }
-    }
-
-    private void WireCalibSlider(UISlider ourSlider, System.Func<UGUISlider> getOriginal)
-    {
-        if (ourSlider == null) return;
-
-        var original = getOriginal();
-        if (original != null)
-        {
-            ourSlider.lowValue  = original.minValue;
-            ourSlider.highValue = original.maxValue;
-            ourSlider.value     = original.value;
-        }
-
-        ourSlider.RegisterValueChangedCallback(evt =>
-        {
-            var orig = getOriginal();
-            if (orig != null) orig.value = evt.newValue;
-        });
     }
 }

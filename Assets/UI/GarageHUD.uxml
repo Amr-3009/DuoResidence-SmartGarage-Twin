@@ -227,37 +227,21 @@
 
                     <ui:VisualElement class="dash-cctv-buttons">
                         <ui:Button name="Btn_Overview" text="Overview" class="dash-cam-btn" />
-                        <ui:Button name="Btn_LaneA" text="Lane A" class="dash-cam-btn" />
-                        <ui:Button name="Btn_LaneB" text="Lane B" class="dash-cam-btn" />
-                        <ui:Button name="Btn_LaneC" text="Lane C" class="dash-cam-btn" />
                         <ui:Button name="Btn_Entrance" text="Entrance" class="dash-cam-btn" />
                         <ui:Button name="Btn_Exit" text="Exit" class="dash-cam-btn" />
                     </ui:VisualElement>
 
-                    <ui:Label text="CALIBRATION" class="popup-section-label" style="margin-top: 14px;" />
-                    <ui:VisualElement class="dash-calib-row">
+                    <ui:VisualElement class="dash-cctv-calib-header">
+                        <ui:Label text="OVERVIEW CALIBRATION" class="popup-section-label" />
+                        <ui:Button name="Btn_ResetView" text="Reset" class="dash-reset-btn" />
+                    </ui:VisualElement>
 
-                        <ui:VisualElement class="dash-calib-col">
-                            <ui:Label text="Lane A" class="dash-calib-label" />
-                            <ui:Slider name="SliderA_Zoom" label="Zoom" low-value="0.5" high-value="5" value="2.5" class="dash-calib-slider" />
-                            <ui:Slider name="SliderA_X" label="X" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
-                            <ui:Slider name="SliderA_Y" label="Y" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
+                    <ui:VisualElement class="dash-calib-row dash-calib-row--single">
+                        <ui:VisualElement class="dash-calib-col dash-calib-col--wide">
+                            <ui:Slider name="SliderOverview_Zoom" label="Zoom" low-value="0.5" high-value="5" value="1" class="dash-calib-slider" />
+                            <ui:Slider name="SliderOverview_X" label="Pan X" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
+                            <ui:Slider name="SliderOverview_Y" label="Pan Y" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
                         </ui:VisualElement>
-
-                        <ui:VisualElement class="dash-calib-col">
-                            <ui:Label text="Lane B" class="dash-calib-label" />
-                            <ui:Slider name="SliderB_Zoom" label="Zoom" low-value="0.5" high-value="5" value="2.5" class="dash-calib-slider" />
-                            <ui:Slider name="SliderB_X" label="X" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
-                            <ui:Slider name="SliderB_Y" label="Y" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
-                        </ui:VisualElement>
-
-                        <ui:VisualElement class="dash-calib-col">
-                            <ui:Label text="Lane C" class="dash-calib-label" />
-                            <ui:Slider name="SliderC_Zoom" label="Zoom" low-value="0.5" high-value="5" value="2.5" class="dash-calib-slider" />
-                            <ui:Slider name="SliderC_X" label="X" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
-                            <ui:Slider name="SliderC_Y" label="Y" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
-                        </ui:VisualElement>
-
                     </ui:VisualElement>
 
                 </ui:VisualElement>

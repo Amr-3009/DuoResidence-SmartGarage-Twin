@@ -22,7 +22,7 @@ public class GarageScenePreviewLoader : MonoBehaviour
 {
     [Header("Scene to preview")]
     [Tooltip("Name must match Build Settings exactly.")]
-    public string previewSceneName = "GarageTwin_Phase1";
+    public string previewSceneName = "Scene_3D_Environment";
 
     [Header("Render Target")]
     [Tooltip("Same RenderTexture assigned to MainMenuController's cameraPreviewTexture.")]
@@ -52,11 +52,18 @@ public class GarageScenePreviewLoader : MonoBehaviour
     private Scene _previewScene;
     private bool  _loaded;
 
+    // Kicks off the additive scene load as a coroutine.
     private void Start()
     {
         StartCoroutine(LoadPreviewScene());
     }
 
+    /// <summary>
+    /// Additively loads <see cref="previewSceneName"/>, then configures its preview
+    /// camera and strips out anything that could interfere with the MainMenu UI
+    /// (HUD, audio listener, event system, canvas raycasters), based on the
+    /// disable* toggles above.
+    /// </summary>
     private IEnumerator LoadPreviewScene()
     {
         if (string.IsNullOrEmpty(previewSceneName) || previewTexture == null)
@@ -80,6 +87,11 @@ public class GarageScenePreviewLoader : MonoBehaviour
         if (disablePreviewCanvasRaycasters) DisableCanvasRaycasters();
     }
 
+    /// <summary>
+    /// Finds the camera named <see cref="previewCameraName"/> in the loaded preview
+    /// scene, enables it, points it at <see cref="previewTexture"/>, and (if
+    /// <see cref="disableOtherCameras"/> is set) disables every other camera in that scene.
+    /// </summary>
     private void SetupPreviewCamera()
     {
         Camera previewCam = null;
@@ -118,6 +130,8 @@ public class GarageScenePreviewLoader : MonoBehaviour
         }
     }
 
+    // Disables the preview scene's UIDocument (the in-scene HUD) so it doesn't
+    // render full-screen on top of the MainMenu UI.
     private void DisableHUD()
     {
         foreach (var go in _previewScene.GetRootGameObjects())
@@ -128,6 +142,8 @@ public class GarageScenePreviewLoader : MonoBehaviour
         }
     }
 
+    // Disables any AudioListeners in the preview scene to avoid Unity's
+    // "multiple AudioListeners" warning while both scenes are loaded.
     private void DisableAudioListener()
     {
         foreach (var go in _previewScene.GetRootGameObjects())
@@ -181,6 +197,7 @@ public class GarageScenePreviewLoader : MonoBehaviour
         }
     }
 
+    // Unloads the additively-loaded preview scene when this object is destroyed.
     private void OnDestroy()
     {
         if (_loaded && _previewScene.IsValid())

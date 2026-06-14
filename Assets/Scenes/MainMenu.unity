@@ -366,7 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f510ca42ab96bcf4dbfed9f9d9daddec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
-  garageSceneName: GarageTwin_Phase1
+  garageSceneName: Scene_3D_Environment
   streetLightsSceneName: StreetLights
   accessControlSceneName: AccessControl
   hvacSceneName: HVACSystem
@@ -423,7 +423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae0b001a791114a4d979d3cdf9d5922f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GarageScenePreviewLoader
-  previewSceneName: GarageTwin_Phase1
+  previewSceneName: Scene_3D_Environment
   previewTexture: {fileID: 8400000, guid: 73786081350878346a6b004ce65a9eab, type: 2}
   previewCameraName: PreviewCamera
   disableOtherCameras: 1

@@ -15,7 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/LoadingScreen.unity
     guid: 2008aa7a024984d4cb472a49b7ac9ab0
   - enabled: 1
-    path: Assets/Scenes/GarageTwin_Phase1.unity
+    path: Assets/Scenes/Scene_3D_Environment.unity
     guid: a61396329c89beb48965eafd496279b0
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 555dfc704748f2d4ea540def1e38cef8, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 5f296fcc76ea9c640a1283a9326b3eda, type: 2}

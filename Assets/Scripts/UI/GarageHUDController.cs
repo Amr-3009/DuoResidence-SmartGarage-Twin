@@ -21,6 +21,10 @@ public class GarageHUDController : MonoBehaviour
     private Button _hamburgerBtn;
     private VisualElement _hamburgerMenu;
 
+    /// <summary>
+    /// Binds all HUD UI Toolkit elements and wires up the hamburger dropdown,
+    /// the Scenes popup and the Dashboards popup (open/close + outside-click-to-close).
+    /// </summary>
     private void OnEnable()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
@@ -88,6 +92,7 @@ public class GarageHUDController : MonoBehaviour
         });
     }
 
+    // Opens the hamburger dropdown if closed, or closes it if already open.
     private void ToggleHamburgerMenu()
     {
         if (_hamburgerMenu.ClassListContains("hud-menu-dropdown--open"))
@@ -96,33 +101,43 @@ public class GarageHUDController : MonoBehaviour
             OpenHamburgerMenu();
     }
 
+    // Shows the hamburger dropdown and lets it receive pointer input.
     private void OpenHamburgerMenu()
     {
         _hamburgerMenu.AddToClassList("hud-menu-dropdown--open");
         _hamburgerMenu.pickingMode = PickingMode.Position;
     }
 
+    // Hides the hamburger dropdown and stops it from blocking clicks underneath.
     private void CloseHamburgerMenu()
     {
         _hamburgerMenu.RemoveFromClassList("hud-menu-dropdown--open");
         _hamburgerMenu.pickingMode = PickingMode.Ignore;
     }
 
+    // Shows / hides the "Scenes" selection popup overlay.
     private void OpenPopup()  => _popupOverlay.AddToClassList("popup-overlay--visible");
     private void ClosePopup() => _popupOverlay.RemoveFromClassList("popup-overlay--visible");
 
+    /// <summary>
+    /// Opens the dashboards popup, preferring GarageDashboardsController.Open()
+    /// when present, otherwise falling back to toggling the overlay's USS class directly.
+    /// </summary>
     private void OpenDashboards()
     {
         if (_dashboardsController != null) _dashboardsController.Open();
         else _dashboardsOverlay.AddToClassList("popup-overlay--visible");
     }
 
+    // Closes the dashboards popup, mirroring OpenDashboards()'s fallback logic.
     private void CloseDashboards()
     {
         if (_dashboardsController != null) _dashboardsController.Close();
         else _dashboardsOverlay.RemoveFromClassList("popup-overlay--visible");
     }
 
+    // Scene-navigation shortcuts: both route through LoadingScreenController
+    // so a themed loading screen is shown during the scene switch.
     private void GoToMainMenu()
         => LoadingScreenController.LoadScene(mainMenuSceneName, "Main Menu", "blue");
 

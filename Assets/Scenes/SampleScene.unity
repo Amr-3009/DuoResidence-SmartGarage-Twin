@@ -187,7 +187,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TwinSyncManager
   twinBuilder: {fileID: 519545192}
-  subscriptionTopic: DuoResidence/Amr/Garage/Slots/#
+  slotSubscriptionTopic: DuoResidence/Amr/Garage/Slots/#
+  hvacSubscriptionTopic: DuoResidence/Amr/Garage/HVAC/Telemetry
+  trafficSubscriptionTopic: DuoResidence/Amr/Garage/Traffic/EntranceCount
+  airQualityVisualizer: {fileID: 0}
+  hvacDashboardController: {fileID: 0}
+  totalCarsText: {fileID: 0}
+  fanDashboardController: {fileID: 0}
 --- !u!4 &288237966
 Transform:
   m_ObjectHideFlags: 0
