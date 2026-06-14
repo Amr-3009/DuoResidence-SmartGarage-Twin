@@ -13,8 +13,16 @@ public class GarageHUDController : MonoBehaviour
     [Header("Scene Names (must match Build Settings)")]
     public string mainMenuSceneName     = "MainMenu";
     public string streetLightsSceneName = "StreetLights";
+    public string vrSceneName           = "Scene_VR_Enviroment";
 
-    private VisualElement _popupOverlay;
+    /// <summary>
+    /// True whenever any popup (Scenes or Dashboards) is visible.
+    /// Mover reads this to keep the cursor free while a popup is open.
+    /// </summary>
+    public static bool IsAnyPopupOpen { get; private set; }
+
+    
+private VisualElement _popupOverlay;
     private VisualElement _dashboardsOverlay;
     private GarageDashboardsController _dashboardsController;
 
@@ -82,6 +90,7 @@ public class GarageHUDController : MonoBehaviour
 
         root.Q<Button>("PopupCard_Garage").clicked       += ClosePopup;
         root.Q<Button>("PopupCard_StreetLights").clicked += GoToStreetLights;
+        root.Q<Button>("PopupCard_VR").clicked           += GoToVR;
 
         // ── Dashboards popup ───────────────────────────────────────
         root.Q<Button>("CloseDashboardsBtn").clicked += CloseDashboards;
@@ -91,6 +100,34 @@ public class GarageHUDController : MonoBehaviour
             if (evt.target == _dashboardsOverlay) CloseDashboards();
         });
     }
+
+private void Update()
+    {
+        if (UnityEngine.Input.GetKeyDown(KeyCode.B))
+            OpenDashboards();
+
+        if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (IsAnyPopupOpen || _hamburgerMenu.ClassListContains("hud-menu-dropdown--open"))
+            {
+                ClosePopup();
+                CloseDashboards();
+                CloseHamburgerMenu();
+            }
+            else
+            {
+                OpenHamburgerMenu();
+            }
+        }
+
+        // Keep the static flag in sync every frame so Mover always has the right value.
+        // Hamburger menu counts as a popup for cursor/movement purposes.
+        IsAnyPopupOpen =
+            _popupOverlay.ClassListContains("popup-overlay--visible") ||
+            _dashboardsOverlay.ClassListContains("popup-overlay--visible") ||
+            _hamburgerMenu.ClassListContains("hud-menu-dropdown--open");
+    }
+
 
     // Opens the hamburger dropdown if closed, or closes it if already open.
     private void ToggleHamburgerMenu()
@@ -143,4 +180,7 @@ public class GarageHUDController : MonoBehaviour
 
     private void GoToStreetLights()
         => LoadingScreenController.LoadScene(streetLightsSceneName, "Street Lights", "amber");
+
+    private void GoToVR()
+        => LoadingScreenController.LoadScene(vrSceneName, "Garage VR", "gray");
 }

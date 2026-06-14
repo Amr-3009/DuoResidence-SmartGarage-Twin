@@ -17,6 +17,8 @@ public class MainMenuController : MonoBehaviour
     public string accessControlSceneName   = "AccessControl";
     public string hvacSceneName            = "HVACSystem";
     public string evChargersSceneName      = "EVChargers";
+    public string vrSceneName             = "Scene_VR_Enviroment";
+
     public string securityCamerasSceneName = "SecurityCameras";
 
     [Header("Live Camera Preview")]
@@ -41,11 +43,8 @@ public class MainMenuController : MonoBehaviour
     /// wires popup close buttons and outside-click-to-close, scene cards,
     /// settings toggles and the Quit button. Also ensures the cursor is visible.
     /// </summary>
-    private void OnEnable()
+private void OnEnable()
     {
-        // UnityEngine.Cursor.visible/lockState are global and persist across scene loads.
-        // The garage scene's fly camera (Mover.cs) hides and locks the cursor
-        // by default, so make sure it's visible again whenever the menu shows.
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
 
@@ -73,8 +72,8 @@ public class MainMenuController : MonoBehaviour
 
         // Close buttons
         root.Q<Button>("CloseLoadSceneBtn").clicked += () => HidePopup(_loadScenePopup);
-        root.Q<Button>("CloseConnectBtn").clicked    += () => HidePopup(_connectPopup);
-        root.Q<Button>("CloseSettingsBtn").clicked   += () => HidePopup(_settingsPopup);
+        root.Q<Button>("CloseConnectBtn").clicked   += () => HidePopup(_connectPopup);
+        root.Q<Button>("CloseSettingsBtn").clicked  += () => HidePopup(_settingsPopup);
 
         // Click outside card closes popup
         RegisterOverlayClose(_loadScenePopup);
@@ -84,6 +83,7 @@ public class MainMenuController : MonoBehaviour
         // Scene cards inside Load Scene popup
         root.Q<Button>("PopupCard_Garage").clicked       += LoadGarageScene;
         root.Q<Button>("PopupCard_StreetLights").clicked += LoadStreetLightsScene;
+        root.Q<Button>("PopupCard_VR").clicked           += LoadVRScene;
 
         // Settings toggles
         WireToggle(root.Q<Button>("ToggleDarkMode"));
@@ -183,6 +183,10 @@ public class MainMenuController : MonoBehaviour
 
     private void LoadStreetLightsScene()
         => LoadingScreenController.LoadScene(streetLightsSceneName, "Street Lights", "amber");
+
+private void LoadVRScene()
+        => LoadingScreenController.LoadScene(vrSceneName, "Garage VR", "gray");
+
 
     // ─── Quit ───────────────────────────────────────────────────
 

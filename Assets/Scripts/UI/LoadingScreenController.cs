@@ -49,6 +49,7 @@ public class LoadingScreenController : MonoBehaviour
     // ── Icon tint colours ──────────────────────────────────────────
     private static readonly Color BlueColor  = new Color(70f/255f, 140f/255f, 220f/255f);
     private static readonly Color AmberColor = new Color(200f/255f, 130f/255f, 50f/255f);
+    private static readonly Color GrayColor  = new Color(150f/255f, 150f/255f, 150f/255f);
 
     /// <summary>
     /// Sets up the loading screen on scene enter: shows the cursor, binds the
@@ -78,7 +79,7 @@ public class LoadingScreenController : MonoBehaviour
 
         if (_sceneIconDot != null)
         {
-            var col = (IconColorHint == "amber") ? AmberColor : BlueColor;
+            var col = (IconColorHint == "amber") ? AmberColor : (IconColorHint == "blue") ? BlueColor : GrayColor;
             _sceneIconDot.style.backgroundColor = new StyleColor(col);
         }
 

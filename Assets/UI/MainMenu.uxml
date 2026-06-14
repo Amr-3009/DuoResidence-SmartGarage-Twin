@@ -87,6 +87,14 @@
                             <ui:Label text="12 nodes · Auto mode" class="popup-card-item__meta" />
                         </ui:Button>
 
+                        <ui:Button name="PopupCard_VR" class="popup-card-item">
+                            <ui:VisualElement class="popup-icon popup-icon--gray">
+                                <ui:VisualElement class="popup-icon__dot" />
+                            </ui:VisualElement>
+                            <ui:Label text="Garage VR" class="popup-card-item__name" />
+                            <ui:Label text="Immersive VR experience" class="popup-card-item__meta" />
+                        </ui:Button>
+
                     </ui:VisualElement>
 
                     <ui:Label text="FUTURE SCENES" class="popup-section-label" />
