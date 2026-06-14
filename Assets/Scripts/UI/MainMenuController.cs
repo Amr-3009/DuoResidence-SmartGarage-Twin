@@ -75,6 +75,7 @@ private void OnEnable()
         root.Q<Button>("CloseConnectBtn").clicked   += () => HidePopup(_connectPopup);
         root.Q<Button>("CloseSettingsBtn").clicked  += () => HidePopup(_settingsPopup);
 
+
         // Click outside card closes popup
         RegisterOverlayClose(_loadScenePopup);
         RegisterOverlayClose(_connectPopup);
@@ -184,7 +185,7 @@ private void OnEnable()
     private void LoadStreetLightsScene()
         => LoadingScreenController.LoadScene(streetLightsSceneName, "Street Lights", "amber");
 
-private void LoadVRScene()
+    private void LoadVRScene()
         => LoadingScreenController.LoadScene(vrSceneName, "Garage VR", "gray");
 
 
