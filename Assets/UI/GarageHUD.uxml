@@ -43,7 +43,7 @@
 
             <ui:Button name="MenuItem_Scenes" class="hud-menu-item">
                 <ui:VisualElement class="hud-menu-item__icon-box" />
-                <ui:Label text="Scenes" class="hud-menu-item__label" />
+                <ui:Label text="Load" class="hud-menu-item__label" />
             </ui:Button>
 
         </ui:VisualElement>
@@ -55,12 +55,12 @@
 
                 <!-- Header -->
                 <ui:VisualElement class="popup-header">
-                    <ui:Label text="Load Scene" class="popup-title" />
+                    <ui:Label text="Load" class="popup-title" />
                     <ui:Button name="ClosePopupBtn" text="✕" class="popup-close" />
                 </ui:VisualElement>
 
                 <!-- Active Scenes -->
-                <ui:Label text="ACTIVE SCENES" class="popup-section-label" />
+                <ui:Label text="Twins" class="popup-section-label" />
                 <ui:VisualElement class="popup-grid">
 
                     <ui:Button name="PopupCard_Garage" class="popup-card-item popup-card-item--active">
@@ -81,41 +81,17 @@
 
                 </ui:VisualElement>
 
-                <!-- Future Scenes -->
-                <ui:Label text="FUTURE SCENES" class="popup-section-label" />
+                <!-- VR Scenes -->
+                <ui:Label text="VR" class="popup-section-label" />
                 <ui:VisualElement class="popup-grid">
 
-                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
+                    <ui:Button name="PopupCard_VR" class="popup-card-item">
                         <ui:VisualElement class="popup-icon popup-icon--gray">
                             <ui:VisualElement class="popup-icon__dot" />
                         </ui:VisualElement>
-                        <ui:Label text="Access Control" class="popup-card-item__name" />
-                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
-                    </ui:VisualElement>
-
-                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
-                        <ui:VisualElement class="popup-icon popup-icon--gray">
-                            <ui:VisualElement class="popup-icon__dot" />
-                        </ui:VisualElement>
-                        <ui:Label text="HVAC System" class="popup-card-item__name" />
-                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
-                    </ui:VisualElement>
-
-                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
-                        <ui:VisualElement class="popup-icon popup-icon--gray">
-                            <ui:VisualElement class="popup-icon__dot" />
-                        </ui:VisualElement>
-                        <ui:Label text="EV Chargers" class="popup-card-item__name" />
-                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
-                    </ui:VisualElement>
-
-                    <ui:VisualElement class="popup-card-item popup-card-item--locked">
-                        <ui:VisualElement class="popup-icon popup-icon--gray">
-                            <ui:VisualElement class="popup-icon__dot" />
-                        </ui:VisualElement>
-                        <ui:Label text="Security Cameras" class="popup-card-item__name" />
-                        <ui:Label text="Coming soon" class="popup-card-item__meta" />
-                    </ui:VisualElement>
+                        <ui:Label text="Garage VR" class="popup-card-item__name" />
+                        <ui:Label text="Immersive VR experience" class="popup-card-item__meta" />
+                    </ui:Button>
 
                 </ui:VisualElement>
 
@@ -227,37 +203,21 @@
 
                     <ui:VisualElement class="dash-cctv-buttons">
                         <ui:Button name="Btn_Overview" text="Overview" class="dash-cam-btn" />
-                        <ui:Button name="Btn_LaneA" text="Lane A" class="dash-cam-btn" />
-                        <ui:Button name="Btn_LaneB" text="Lane B" class="dash-cam-btn" />
-                        <ui:Button name="Btn_LaneC" text="Lane C" class="dash-cam-btn" />
                         <ui:Button name="Btn_Entrance" text="Entrance" class="dash-cam-btn" />
                         <ui:Button name="Btn_Exit" text="Exit" class="dash-cam-btn" />
                     </ui:VisualElement>
 
-                    <ui:Label text="CALIBRATION" class="popup-section-label" style="margin-top: 14px;" />
-                    <ui:VisualElement class="dash-calib-row">
+                    <ui:VisualElement class="dash-cctv-calib-header">
+                        <ui:Label text="OVERVIEW CALIBRATION" class="popup-section-label" />
+                        <ui:Button name="Btn_ResetView" text="Reset" class="dash-reset-btn" />
+                    </ui:VisualElement>
 
-                        <ui:VisualElement class="dash-calib-col">
-                            <ui:Label text="Lane A" class="dash-calib-label" />
-                            <ui:Slider name="SliderA_Zoom" label="Zoom" low-value="0.5" high-value="5" value="2.5" class="dash-calib-slider" />
-                            <ui:Slider name="SliderA_X" label="X" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
-                            <ui:Slider name="SliderA_Y" label="Y" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
+                    <ui:VisualElement class="dash-calib-row dash-calib-row--single">
+                        <ui:VisualElement class="dash-calib-col dash-calib-col--wide">
+                            <ui:Slider name="SliderOverview_Zoom" label="Zoom" low-value="0.5" high-value="5" value="1" class="dash-calib-slider" />
+                            <ui:Slider name="SliderOverview_X" label="Pan X" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
+                            <ui:Slider name="SliderOverview_Y" label="Pan Y" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
                         </ui:VisualElement>
-
-                        <ui:VisualElement class="dash-calib-col">
-                            <ui:Label text="Lane B" class="dash-calib-label" />
-                            <ui:Slider name="SliderB_Zoom" label="Zoom" low-value="0.5" high-value="5" value="2.5" class="dash-calib-slider" />
-                            <ui:Slider name="SliderB_X" label="X" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
-                            <ui:Slider name="SliderB_Y" label="Y" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
-                        </ui:VisualElement>
-
-                        <ui:VisualElement class="dash-calib-col">
-                            <ui:Label text="Lane C" class="dash-calib-label" />
-                            <ui:Slider name="SliderC_Zoom" label="Zoom" low-value="0.5" high-value="5" value="2.5" class="dash-calib-slider" />
-                            <ui:Slider name="SliderC_X" label="X" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
-                            <ui:Slider name="SliderC_Y" label="Y" low-value="-500" high-value="500" value="0" class="dash-calib-slider" />
-                        </ui:VisualElement>
-
                     </ui:VisualElement>
 
                 </ui:VisualElement>

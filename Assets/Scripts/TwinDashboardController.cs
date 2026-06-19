@@ -3,6 +3,16 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 
+/// <summary>
+/// DuoResidence — Wall/Parking Dashboard Controller (UGUI)
+///
+/// Builds the 3-lane (A/B/C, 40 slots each) parking grid UI from a prefab,
+/// subscribes to MQTT slot-status telemetry to colour each tile vacant/occupied,
+/// and keeps the lane summary labels, capacity gauge and "FACILITY FULL" /
+/// "MONITORING ACTIVE" status text in sync. GarageDashboardsController
+/// re-implements this same view for the UI Toolkit popup and disables this
+/// controller's canvas, but this script keeps running underneath it.
+/// </summary>
 public class TwinDashboardController : MonoBehaviour
 {
     [Header("Node-RED Style Visual Grid Prefabs")]
@@ -34,6 +44,8 @@ public class TwinDashboardController : MonoBehaviour
     private Dictionary<string, bool> twinCapacityMap = new Dictionary<string, bool>();
     private Dictionary<string, Image> gridUiElementMap = new Dictionary<string, Image>();
 
+    // Builds the parking grid, subscribes to MQTT telemetry, and does an
+    // initial refresh of the summary/gauge UI.
     void Start()
     {
         InitializeDashboardMatrices();
@@ -41,11 +53,16 @@ public class TwinDashboardController : MonoBehaviour
         UpdateDashboardVisuals();
     }
 
+    // Unsubscribes from MQTT telemetry to avoid leaking the event handler.
     private void OnDestroy()
     {
         MQTTConnectionManager.OnTelemetryMessageReceived -= ProcessIncomingDashboardTelemetry;
     }
 
+    /// <summary>
+    /// Builds all three lane grids (A, B, C), each split into two rows of 20
+    /// slots (1-20 and 21-40), under their respective parent containers.
+    /// </summary>
     private void InitializeDashboardMatrices()
     {
         string[] targetLanes = { "A", "B", "C" }; 
@@ -62,6 +79,12 @@ public class TwinDashboardController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Instantiates one grid-slot prefab per slot ID in the given range
+    /// (e.g. A01..A20), labels it (TextMeshPro or legacy Text), sets it to
+    /// the vacant colour, registers it in <see cref="twinCapacityMap"/> and
+    /// <see cref="gridUiElementMap"/> for later telemetry-driven updates.
+    /// </summary>
     private void BuildLaneUISequence(string laneID, int start, int end, Transform parentContainer)
     {
         for (int i = start; i <= end; i++)
@@ -93,6 +116,11 @@ public class TwinDashboardController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// MQTT telemetry handler. If the topic's last segment matches a known slot ID,
+    /// updates that slot's vacant/occupied state and tile colour, then refreshes
+    /// the lane summaries and capacity gauge.
+    /// </summary>
     private void ProcessIncomingDashboardTelemetry(string topic, string payload)
     {
         string[] structuralParts = topic.Split('/');
@@ -112,6 +140,11 @@ public class TwinDashboardController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Recomputes occupied counts per lane from <see cref="twinCapacityMap"/>,
+    /// then updates the lane summary labels, the capacity slider/percentage/fill
+    /// colour, and the facility status text (FULL vs MONITORING ACTIVE).
+    /// </summary>
     private void UpdateDashboardVisuals()
     {
         int occupiedCountA = 0;

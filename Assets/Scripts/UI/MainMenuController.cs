@@ -17,6 +17,8 @@ public class MainMenuController : MonoBehaviour
     public string accessControlSceneName   = "AccessControl";
     public string hvacSceneName            = "HVACSystem";
     public string evChargersSceneName      = "EVChargers";
+    public string vrSceneName             = "Scene_VR_Enviroment";
+
     public string securityCamerasSceneName = "SecurityCameras";
 
     [Header("Live Camera Preview")]
@@ -35,11 +37,14 @@ public class MainMenuController : MonoBehaviour
     private VisualElement _connectPopup;
     private VisualElement _settingsPopup;
 
-    private void OnEnable()
+    /// <summary>
+    /// Binds the main menu UI: applies the live camera preview to the viewport,
+    /// wires sidebar nav buttons to their popups (Load Scene / Connect / Settings),
+    /// wires popup close buttons and outside-click-to-close, scene cards,
+    /// settings toggles and the Quit button. Also ensures the cursor is visible.
+    /// </summary>
+private void OnEnable()
     {
-        // UnityEngine.Cursor.visible/lockState are global and persist across scene loads.
-        // The garage scene's fly camera (Mover.cs) hides and locks the cursor
-        // by default, so make sure it's visible again whenever the menu shows.
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
 
@@ -67,8 +72,9 @@ public class MainMenuController : MonoBehaviour
 
         // Close buttons
         root.Q<Button>("CloseLoadSceneBtn").clicked += () => HidePopup(_loadScenePopup);
-        root.Q<Button>("CloseConnectBtn").clicked    += () => HidePopup(_connectPopup);
-        root.Q<Button>("CloseSettingsBtn").clicked   += () => HidePopup(_settingsPopup);
+        root.Q<Button>("CloseConnectBtn").clicked   += () => HidePopup(_connectPopup);
+        root.Q<Button>("CloseSettingsBtn").clicked  += () => HidePopup(_settingsPopup);
+
 
         // Click outside card closes popup
         RegisterOverlayClose(_loadScenePopup);
@@ -78,6 +84,7 @@ public class MainMenuController : MonoBehaviour
         // Scene cards inside Load Scene popup
         root.Q<Button>("PopupCard_Garage").clicked       += LoadGarageScene;
         root.Q<Button>("PopupCard_StreetLights").clicked += LoadStreetLightsScene;
+        root.Q<Button>("PopupCard_VR").clicked           += LoadVRScene;
 
         // Settings toggles
         WireToggle(root.Q<Button>("ToggleDarkMode"));
@@ -88,6 +95,10 @@ public class MainMenuController : MonoBehaviour
         root.Q<Button>("QuitButton").clicked += QuitApplication;
     }
 
+    /// <summary>
+    /// Continuously re-forces the cursor to be visible/unlocked while the main
+    /// menu is active, in case another script (e.g. the garage fly camera) hides it.
+    /// </summary>
     private void Update()
     {
         // Belt-and-braces: keep the cursor visible while the menu is active,
@@ -101,6 +112,8 @@ public class MainMenuController : MonoBehaviour
 
     // ─── Camera Preview ──────────────────────────────────────────
 
+    // Shows the live garage camera feed in the viewport if a RenderTexture is
+    // assigned, otherwise shows the placeholder label instead.
     private void ApplyCameraPreview()
     {
         if (cameraPreviewTexture != null)
@@ -120,6 +133,10 @@ public class MainMenuController : MonoBehaviour
 
     // ─── Popups ────────────────────────────────────────────────
 
+    /// <summary>
+    /// Closes all sidebar popups, then opens <paramref name="popup"/> only if it
+    /// wasn't already the visible one (so clicking the same nav button again closes it).
+    /// </summary>
     private void TogglePopup(VisualElement popup)
     {
         bool isVisible = popup.ClassListContains("popup-overlay--visible");
@@ -134,9 +151,12 @@ public class MainMenuController : MonoBehaviour
             ShowPopup(popup);
     }
 
+    // Shows / hides a popup overlay via its USS visibility class.
     private void ShowPopup(VisualElement popup) => popup.AddToClassList("popup-overlay--visible");
     private void HidePopup(VisualElement popup) => popup.RemoveFromClassList("popup-overlay--visible");
 
+    // Closes the popup when the user clicks the overlay background itself
+    // (i.e. outside the popup card).
     private void RegisterOverlayClose(VisualElement overlay)
     {
         overlay.RegisterCallback<ClickEvent>(evt =>
@@ -147,6 +167,8 @@ public class MainMenuController : MonoBehaviour
 
     // ─── Settings Toggles ────────────────────────────────────────
 
+    // Hooks up a settings toggle button to flip its "on" visual state on click.
+    // (Display-only: no persisted settings logic yet.)
     private void WireToggle(Button toggle)
     {
         if (toggle == null) return;
@@ -155,14 +177,21 @@ public class MainMenuController : MonoBehaviour
 
     // ─── Scene Loading (routed through LoadingScreen) ───────────
 
+    // Sidebar scene-card actions: both route through LoadingScreenController
+    // so a themed loading screen is shown during the scene switch.
     private void LoadGarageScene()
         => LoadingScreenController.LoadScene(garageSceneName, "Smart Garage", "blue");
 
     private void LoadStreetLightsScene()
         => LoadingScreenController.LoadScene(streetLightsSceneName, "Street Lights", "amber");
 
+    private void LoadVRScene()
+        => LoadingScreenController.LoadScene(vrSceneName, "Garage VR", "gray");
+
+
     // ─── Quit ───────────────────────────────────────────────────
 
+    // Exits Play Mode in the Editor, or quits the built application.
     private void QuitApplication()
     {
 #if UNITY_EDITOR

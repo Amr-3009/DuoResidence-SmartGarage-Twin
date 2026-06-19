@@ -49,7 +49,13 @@ public class LoadingScreenController : MonoBehaviour
     // ── Icon tint colours ──────────────────────────────────────────
     private static readonly Color BlueColor  = new Color(70f/255f, 140f/255f, 220f/255f);
     private static readonly Color AmberColor = new Color(200f/255f, 130f/255f, 50f/255f);
+    private static readonly Color GrayColor  = new Color(150f/255f, 150f/255f, 150f/255f);
 
+    /// <summary>
+    /// Sets up the loading screen on scene enter: shows the cursor, binds the
+    /// progress UI, displays the target scene's label/icon colour, and starts
+    /// the async load of <see cref="TargetScene"/> (set by <see cref="LoadScene"/>).
+    /// </summary>
     private void OnEnable()
     {
         // UnityEngine.Cursor.visible/lockState are global and persist across scene loads.
@@ -73,7 +79,7 @@ public class LoadingScreenController : MonoBehaviour
 
         if (_sceneIconDot != null)
         {
-            var col = (IconColorHint == "amber") ? AmberColor : BlueColor;
+            var col = (IconColorHint == "amber") ? AmberColor : (IconColorHint == "blue") ? BlueColor : GrayColor;
             _sceneIconDot.style.backgroundColor = new StyleColor(col);
         }
 
@@ -89,6 +95,11 @@ public class LoadingScreenController : MonoBehaviour
     }
 
     // ── Async Load Coroutine ───────────────────────────────────────
+    /// <summary>
+    /// Asynchronously loads <see cref="TargetScene"/>, smoothing the displayed
+    /// progress bar and cycling through <see cref="StatusMessages"/> as it goes,
+    /// then activates the new scene once loading reaches 100%.
+    /// </summary>
     private IEnumerator LoadAsync()
     {
         yield return null; // let the UI render one frame first
@@ -140,6 +151,8 @@ public class LoadingScreenController : MonoBehaviour
     }
 
     // ── Helpers ────────────────────────────────────────────────────
+    // Updates the progress bar fill/percentage label, and optionally the
+    // status message (pass null to leave the current status text unchanged).
     private void SetProgress(float t, string statusMsg)
     {
         int pct = Mathf.RoundToInt(t * 100f);

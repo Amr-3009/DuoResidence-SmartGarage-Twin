@@ -2,6 +2,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// DuoResidence — Fan Dashboard Controller (UGUI)
+///
+/// Displays live big/small fan RPM (driven via <see cref="UpdateFanTelemetry"/> from
+/// TwinSyncManager) and provides a manual ventilation override button that publishes
+/// an MQTT command and temporarily locks the controls for the chosen duration.
+/// Its UGUI canvas is normally hidden behind the UI Toolkit dashboards popup
+/// (GarageDashboardsController), which reads its public accessors and forwards
+/// button/dropdown interactions to this controller.
+/// </summary>
 public class FanDashboardController : MonoBehaviour
 {
     [Header("RPM Display Text Objects")]
@@ -32,6 +42,11 @@ public class FanDashboardController : MonoBehaviour
     public TextMeshProUGUI ButtonLabelText => buttonLabelText;
     public bool IsOverrideActive => _isOverrideActive;
 
+    /// <summary>
+    /// Caches the button's label text (if not explicitly assigned), remembers its
+    /// original text for restoring after a lockout, and binds the increase-RPM
+    /// button's click to <see cref="ExecuteVentilationOverride"/>.
+    /// </summary>
     void Start()
     {
         // Cache the original button label if it isn't explicitly linked
@@ -52,6 +67,11 @@ public class FanDashboardController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// While a manual override is active, counts down <see cref="_lockoutTimer"/>,
+    /// shows the remaining seconds on the button label, and re-enables the
+    /// controls (restoring the original label) once the timer reaches zero.
+    /// </summary>
     void Update()
     {
         // Run the real-time frame countdown if an override is actively ticking
@@ -130,6 +150,7 @@ public class FanDashboardController : MonoBehaviour
         Debug.Log($"<color=orange><b>[Fan Override Sent]:</b></color> Target {targetPercentage}% for {chosenDuration}s. Interface Locked.");
     }
 
+    // Removes the click listener added in Start() to avoid a dangling reference.
     private void OnDestroy()
     {
         if (increaseRpmButton != null)

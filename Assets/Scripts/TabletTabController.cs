@@ -1,6 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// DuoResidence — Tablet Hub Tab Controller (UGUI)
+///
+/// Drives the in-scene tablet's bottom navigation bar, switching between the
+/// Parking, Air Quality and CCTV content panels by enabling only the panel
+/// matching the clicked tab.
+/// </summary>
 public class TabletTabController : MonoBehaviour
 {
     [Header("📱 Tablet Navigation Tab Buttons")]
@@ -13,6 +20,8 @@ public class TabletTabController : MonoBehaviour
     [SerializeField] private GameObject panelAirQuality;
     [SerializeField] private GameObject panelCCTV;
 
+    // Wires each nav button to switch to its corresponding tab, and selects
+    // the Parking tab as the default view.
     private void Start()
     {
         // Programmatically bind click actions to the navigation bar buttons

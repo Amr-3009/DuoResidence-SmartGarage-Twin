@@ -518,15 +518,50 @@
     color: rgb(220, 220, 215);
 }
 
+/* ── CCTV Calibration (Overview-only deck) ─────────────────────── */
+.dash-cctv-calib-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.dash-reset-btn {
+    font-size: 11px;
+    -unity-font-style: bold;
+    color: rgb(180, 180, 175);
+    background-color: rgb(26, 26, 24);
+    border-width: 1px;
+    border-color: rgba(255,255,255,0.10);
+    border-radius: 8px;
+    padding: 4px 12px;
+    margin-bottom: 10px;
+}
+.dash-reset-btn:hover {
+    background-color: rgb(34, 34, 32);
+    border-color: rgba(255,255,255,0.22);
+}
+.dash-reset-btn:disabled {
+    opacity: 0.45;
+}
+
 /* ── Calibration Sliders ──────────────────────────────────────── */
 .dash-calib-row {
     flex-direction: row;
     justify-content: space-between;
 }
 
+.dash-calib-row--single {
+    justify-content: flex-start;
+}
+
 .dash-calib-col {
     width: 32%;
     flex-direction: column;
+}
+
+.dash-calib-col--wide {
+    width: 100%;
 }
 
 .dash-calib-label {
@@ -550,4 +585,11 @@
 .dash-calib-slider .unity-base-slider__dragger {
     background-color: rgb(70, 140, 220);
     border-width: 0;
+}
+.dash-calib-col--wide .dash-calib-slider .unity-base-slider__label {
+    min-width: 52px;
+}
+.dash-calib-col--wide .dash-calib-slider {
+    width: 100%;
+    max-width: 420px;
 }

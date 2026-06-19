@@ -8,6 +8,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// DuoResidence — CCTV Client (UGUI)
+///
+/// Streams an MJPEG feed from a backend server on a background thread and
+/// displays it on a RawImage, with buttons to switch camera view (Overview /
+/// Entrance / Exit), start/stop the session, and zoom/pan-control sliders
+/// (with auto-recalculated pan bounds) for the Overview camera. Its UGUI canvas
+/// is normally hidden behind the UI Toolkit dashboards popup
+/// (GarageDashboardsController), which mirrors this UI and forwards interactions
+/// through the public methods/sliders below.
+/// </summary>
 public class CCTVClient : MonoBehaviour
 {
     [Header("Network Configuration")]
@@ -55,6 +66,11 @@ public class CCTVClient : MonoBehaviour
     private readonly object _lockObject = new object();
     private bool _hasNewFrameReady = false;
 
+    /// <summary>
+    /// Creates the placeholder video texture, resolves the viewport parent,
+    /// resets pan/zoom to defaults, refreshes the UI, and wires up all buttons
+    /// and sliders.
+    /// </summary>
     private void Start()
     {
         _videoTexture = new Texture2D(2, 2, TextureFormat.RGB24, false);
@@ -82,6 +98,9 @@ public class CCTVClient : MonoBehaviour
         UpdateSliderInteractivityMatrix();
     }
 
+    // Hooks up the zoom/pan-X/pan-Y sliders so changing them updates the
+    // corresponding overview transform variables (zoom changes also recompute
+    // the pan bounds).
     private void WireSliderListeners()
     {
         if (sliderOverview_Zoom != null) sliderOverview_Zoom.onValueChanged.AddListener((v) => {
@@ -93,6 +112,8 @@ public class CCTVClient : MonoBehaviour
         if (sliderOverview_Y != null) sliderOverview_Y.onValueChanged.AddListener((v) => overviewY = v);
     }
 
+    // Recomputes the min/max range of the pan-X/pan-Y sliders so the zoomed-in
+    // view can never be panned past the edges of the viewport.
     private void RecalculateDynamicPanBounds()
     {
         if (displayRect == null || viewportParent == null || sliderOverview_X == null || sliderOverview_Y == null) return;
@@ -110,6 +131,8 @@ public class CCTVClient : MonoBehaviour
         sliderOverview_Y.maxValue = maxDeltaY;
     }
 
+    // Resets pan/zoom to their default values, updates the slider handles to
+    // match, and re-applies the viewport transform.
     public void ResetSlidersAndTransform()
     {
         ResetVariablesToDefaultSystemValues();
@@ -118,6 +141,11 @@ public class CCTVClient : MonoBehaviour
         Debug.Log("[CCTV Client] Overview pan/zoom matrix reset to factory center-baseline.");
     }
 
+    /// <summary>
+    /// Starts or stops the CCTV session: starting begins the network stream;
+    /// stopping halts it, clears the display to black and resets pan/zoom.
+    /// Either way, refreshes the status/label UI and slider interactivity.
+    /// </summary>
     public void ToggleMasterSession()
     {
         if (!_isSessionActive)
@@ -139,6 +167,8 @@ public class CCTVClient : MonoBehaviour
         UpdateSliderInteractivityMatrix();
     }
 
+    // Restores the overview zoom/pan-X/pan-Y working variables to their
+    // hardcoded defaults.
     private void ResetVariablesToDefaultSystemValues()
     {
         overviewZoom = defZoom; 
@@ -146,6 +176,8 @@ public class CCTVClient : MonoBehaviour
         overviewY = defY;
     }
 
+    // Pushes the current zoom/pan-X/pan-Y variables onto their slider handles
+    // (and recalculates pan bounds for the new zoom level).
     private void UpdateSliderUiHandlesToMatchVariables()
     {
         if (sliderOverview_Zoom != null) sliderOverview_Zoom.value = overviewZoom;
@@ -154,6 +186,8 @@ public class CCTVClient : MonoBehaviour
         if (sliderOverview_Y != null) sliderOverview_Y.value = overviewY;
     }
 
+    // Enables the zoom/pan sliders and reset-view button only while a session
+    // is active and the active camera is the Overview camera.
     private void UpdateSliderInteractivityMatrix()
     {
         bool allowOverviewControls = _isSessionActive && _activeMode == "OVERVIEW";
@@ -165,6 +199,12 @@ public class CCTVClient : MonoBehaviour
         if (btnResetView != null) btnResetView.interactable = allowOverviewControls;
     }
 
+    /// <summary>
+    /// Switches the active camera view (OVERVIEW / ENTRANCE / EXIT). If the
+    /// underlying stream path changes, aborts any in-flight request so the
+    /// background thread reconnects to the new path, then refreshes the
+    /// viewport transform, status UI and slider interactivity.
+    /// </summary>
     public void SelectCameraView(string mode)
     {
         _activeMode = mode.ToUpper();
@@ -191,6 +231,8 @@ public class CCTVClient : MonoBehaviour
         UpdateSliderInteractivityMatrix(); 
     }
 
+    // Applies the current zoom/pan as a scale + anchored-position on the
+    // display RectTransform for Overview mode, or resets it for other modes.
     private void ApplyGeometricViewportView()
     {
         if (displayRect == null) return;
@@ -207,6 +249,11 @@ public class CCTVClient : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// On the main thread: loads the latest JPEG frame (if any) produced by
+    /// the background stream thread into the video texture, and continuously
+    /// re-applies the viewport transform while a session is active.
+    /// </summary>
     private void Update()
     {
         if (_hasNewFrameReady)
@@ -222,6 +269,8 @@ public class CCTVClient : MonoBehaviour
         }
     }
 
+    // Stops any existing stream, then starts a new background thread running
+    // MjpegStreamListener().
     private void StartNetworkStream()
     {
         StopNetworkStream(); 
@@ -231,6 +280,8 @@ public class CCTVClient : MonoBehaviour
         _networkThread.Start();
     }
 
+    // Marks the session inactive and aborts any in-flight HTTP request so the
+    // background thread's loop exits.
     private void StopNetworkStream()
     {
         _isSessionActive = false;
@@ -245,6 +296,13 @@ public class CCTVClient : MonoBehaviour
         _hasNewFrameReady = false;
     }
 
+    /// <summary>
+    /// Background-thread loop: connects to the MJPEG endpoint for the current
+    /// camera mode, parses the multipart stream's Content-Length headers and
+    /// reads each JPEG frame into <see cref="_latestFrameBytes"/> for Update()
+    /// to display. Reconnects on error/timeout, and exits early if the
+    /// requested stream path changes mid-read.
+    /// </summary>
     private void MjpegStreamListener()
     {
         while (_isSessionActive)
@@ -301,6 +359,8 @@ public class CCTVClient : MonoBehaviour
         }
     }
 
+    // Reads a single CRLF-terminated ASCII line from the MJPEG stream
+    // (used for parsing multipart headers); returns null on read failure.
     private string ReadAsciiLine(BinaryReader reader)
     {
         string line = ""; char c;
@@ -310,6 +370,8 @@ public class CCTVClient : MonoBehaviour
         } catch { return null; }
     }
 
+    // Resets the display RectTransform to scale 1 / centered position
+    // (the non-Overview, unzoomed view).
     private void ResetViewportTransform()
     {
         if (displayRect == null) return;
@@ -317,6 +379,8 @@ public class CCTVClient : MonoBehaviour
         displayRect.anchoredPosition = Vector2.zero;
     }
 
+    // Updates the camera label, session button text and session button colour
+    // to reflect whether a session is active and which camera mode is selected.
     private void UpdateUIElements()
     {
         if (camLabelText != null) camLabelText.text = _isSessionActive ? $"LIVE: {_activeMode}" : "SYSTEM OFFLINE";
@@ -324,6 +388,8 @@ public class CCTVClient : MonoBehaviour
         if (sessionButton != null) sessionButton.GetComponent<Image>().color = _isSessionActive ? Color.red : Color.green;
     }
 
+    // Replaces the video texture with a blank black 2x2 texture, shown when a
+    // session ends.
     private void ClearDisplayToBlack()
     {
         _videoTexture = new Texture2D(2, 2, TextureFormat.RGB24, false);
@@ -332,6 +398,7 @@ public class CCTVClient : MonoBehaviour
         if (streamDisplay != null) streamDisplay.texture = _videoTexture;
     }
 
+    // Ensures the background streaming thread is stopped when this object is destroyed.
     private void OnDestroy()
     {
         StopNetworkStream();
