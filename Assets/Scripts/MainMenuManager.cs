@@ -4,6 +4,12 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using TMPro;
 
+/// <summary>
+/// DuoResidence — Main Menu Manager (legacy UGUI)
+///
+/// Wires the platform-gateway buttons (3D, VR, Tablet Dashboard, Quit) to load
+/// scenes by build index with an on-screen loading overlay and progress bar.
+/// </summary>
 public class MainMenuManager : MonoBehaviour
 {
     [Header("Platform Gateway Buttons")]
@@ -17,6 +23,10 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private Slider loadingProgressBar;
     [SerializeField] private TextMeshProUGUI loadingStatusText;
 
+    /// <summary>
+    /// Resets time scale, hides the loading overlay, and binds each gateway
+    /// button to load its target scene (or quit, for the Quit button).
+    /// </summary>
     private void Start()
     {
         // Enforce active time dilation initialization on scene entry
@@ -48,6 +58,12 @@ public class MainMenuManager : MonoBehaviour
         StartCoroutine(SceneLoadingSequenceRoutine(sceneBuildIndex));
     }
 
+    /// <summary>
+    /// Shows the loading overlay, disables the menu buttons, then asynchronously
+    /// loads the scene at <paramref name="sceneBuildIndex"/> while smoothly
+    /// animating the progress bar/status text, activating the scene once it
+    /// reaches 100%.
+    /// </summary>
     private IEnumerator SceneLoadingSequenceRoutine(int sceneBuildIndex)
     {
         // Reveal loading screen panel over the gateway menu layout
@@ -97,6 +113,8 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
+    // Enables/disables all gateway buttons at once, used to prevent double-clicks
+    // while a scene load is in progress.
     private void SetMenuButtonsInteractivity(bool activeState)
     {
         if (launch3DButton != null) launch3DButton.interactable = activeState;
@@ -105,6 +123,7 @@ public class MainMenuManager : MonoBehaviour
         if (quitApplicationButton != null) quitApplicationButton.interactable = activeState;
     }
 
+    // Exits Play Mode in the Editor, or quits the built application.
     public void TerminateApplicationRuntime()
     {
         Debug.Log("[System Core] Closing multi-platform hub deployment runtime.");

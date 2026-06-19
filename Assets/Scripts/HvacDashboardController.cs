@@ -2,6 +2,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// DuoResidence — HVAC Dashboard Controller (UGUI)
+///
+/// Displays live CO2 and NO readings as sliders/progress bars with text labels,
+/// blending the fill colour between safe/caution/danger based on configurable
+/// thresholds. Driven via <see cref="UpdateEnvironmentalReadings"/> from
+/// TwinSyncManager. Its UGUI canvas is normally hidden behind the UI Toolkit
+/// dashboards popup (GarageDashboardsController), which polls the read-only
+/// accessors below to mirror these values into the new themed dashboard.
+/// </summary>
 public class HvacDashboardController : MonoBehaviour
 {
     [Header("CO2 Display Elements")]
@@ -23,6 +33,23 @@ public class HvacDashboardController : MonoBehaviour
     [SerializeField] private Color cautionColor = Color.yellow;
     [SerializeField] private Color dangerColor = Color.red;
 
+    // ── Read-only accessors for the UI Toolkit dashboard bridge ──────
+    // (GarageDashboardsController polls these to mirror live values
+    //  into the new themed dashboard without touching the MQTT logic below.)
+    public Slider Co2Slider => co2Slider;
+    public Image  Co2SliderFill => co2SliderFill;
+    public TextMeshProUGUI Co2ValueText => co2ValueText;
+    public float MinCO2Limits => minCO2Limits;
+    public float MaxCO2Limits => maxCO2Limits;
+
+    public Slider NoSlider => noSlider;
+    public Image  NoSliderFill => noSliderFill;
+    public TextMeshProUGUI NoValueText => noValueText;
+    public float MinNOLimits => minNOLimits;
+    public float MaxNOLimits => maxNOLimits;
+
+    // Initialises the CO2 and NO sliders' min/max ranges from the configured
+    // limits and resets their values to the minimum.
     void Start()
     {
         // Enforce exact mathematical boundaries on the slider UI components

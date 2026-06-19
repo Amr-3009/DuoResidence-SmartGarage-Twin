@@ -1,0 +1,204 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="project://database/Assets/UI/MainMenu.uss" />
+
+    <ui:VisualElement name="Root" class="root">
+
+        <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+        <ui:VisualElement name="Sidebar" class="sidebar">
+
+            <!-- Brand -->
+            <ui:VisualElement name="Brand" class="brand">
+                <ui:Label name="BrandLabel" text="DIGITAL TWIN" class="brand-label" />
+                <ui:Label name="BrandName" text="DuoResidence" class="brand-name" />
+                <ui:Label name="BrandSub" text="Smart Compound Control Center" class="brand-sub" />
+            </ui:VisualElement>
+
+            <!-- Nav Section -->
+            <ui:VisualElement name="NavSection" class="nav-section">
+                <ui:Label text="MENU" class="nav-label" />
+
+                <ui:Button name="NavLoadScene" class="nav-item">
+                    <ui:VisualElement class="nav-item__icon" />
+                    <ui:Label text="Start" class="nav-item__label" />
+                </ui:Button>
+
+                <ui:Button name="NavConnect" class="nav-item">
+                    <ui:VisualElement class="nav-item__icon" />
+                    <ui:Label text="Connect" class="nav-item__label" />
+                </ui:Button>
+
+                <ui:Button name="NavSettings" class="nav-item">
+                    <ui:VisualElement class="nav-item__icon" />
+                    <ui:Label text="Settings" class="nav-item__label" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <!-- Footer -->
+            <ui:VisualElement name="SidebarFooter" class="sidebar-footer">
+                <ui:Label text="v1.0.0 — DuoResidence DT" class="version-label" />
+                <ui:Button name="QuitButton" class="quit-btn">
+                    <ui:VisualElement class="quit-btn__icon" />
+                    <ui:Label text="Quit application" class="quit-btn__label" />
+                </ui:Button>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+        <!-- ═══════════════════ END SIDEBAR ═══════════════════ -->
+
+        <!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+        <ui:VisualElement name="MainContent" class="main-content">
+
+            <!-- Live camera viewport -->
+            <ui:VisualElement name="Viewport" class="viewport">
+                <ui:Label name="ViewportPlaceholder" text="Camera preview not connected — assign GarageCameraPreview RenderTexture to a camera's Target Texture" class="viewport__placeholder-label" style="white-space: normal; -unity-text-align: middle-center; width: 60%;" />
+            </ui:VisualElement>
+
+            <!-- Overlay badge -->
+            <ui:VisualElement class="viewport-badge">
+                <ui:VisualElement class="viewport-badge__dot" />
+                <ui:Label text="Smart Garage — Live View" class="viewport-badge__label" />
+            </ui:VisualElement>
+
+            <!-- ─── LOAD SCENE POPUP ─── -->
+            <ui:VisualElement name="LoadScenePopup" class="popup-overlay">
+                <ui:VisualElement class="popup-card popup-card--wide">
+
+                    <ui:VisualElement class="popup-header">
+                        <ui:Label text="Start" class="popup-title" />
+                        <ui:Button name="CloseLoadSceneBtn" text="✕" class="popup-close" />
+                    </ui:VisualElement>
+
+                    <ui:Label text="Twins" class="popup-section-label" />
+                    <ui:VisualElement class="popup-grid">
+
+                        <ui:Button name="PopupCard_Garage" class="popup-card-item popup-card-item--active">
+                            <ui:VisualElement class="popup-icon popup-icon--blue">
+                                <ui:VisualElement class="popup-icon__dot" />
+                            </ui:VisualElement>
+                            <ui:Label text="Smart Garage" class="popup-card-item__name" />
+                            <ui:Label text="3 doors · Sensors active" class="popup-card-item__meta" />
+                        </ui:Button>
+
+                        <ui:Button name="PopupCard_StreetLights" class="popup-card-item">
+                            <ui:VisualElement class="popup-icon popup-icon--amber">
+                                <ui:VisualElement class="popup-icon__dot" />
+                            </ui:VisualElement>
+                            <ui:Label text="Street Lights" class="popup-card-item__name" />
+                            <ui:Label text="12 nodes · Auto mode" class="popup-card-item__meta" />
+                        </ui:Button>
+
+                    </ui:VisualElement>
+
+                    <ui:Label text="VR" class="popup-section-label" />
+                    <ui:VisualElement class="popup-grid">
+
+                        <ui:Button name="PopupCard_VR" class="popup-card-item">
+                            <ui:VisualElement class="popup-icon popup-icon--gray">
+                                <ui:VisualElement class="popup-icon__dot" />
+                            </ui:VisualElement>
+                            <ui:Label text="Garage VR" class="popup-card-item__name" />
+                            <ui:Label text="Immersive VR experience" class="popup-card-item__meta" />
+                        </ui:Button>
+
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <!-- ─── END LOAD SCENE POPUP ─── -->
+
+            <!-- ─── CONNECT POPUP ─── -->
+            <ui:VisualElement name="ConnectPopup" class="popup-overlay">
+                <ui:VisualElement class="popup-card">
+
+                    <ui:VisualElement class="popup-header">
+                        <ui:Label text="Connect" class="popup-title" />
+                        <ui:Button name="CloseConnectBtn" text="✕" class="popup-close" />
+                    </ui:VisualElement>
+
+                    <ui:Label text="DEVICES &amp; NETWORK" class="popup-section-label" />
+
+                    <ui:VisualElement class="connect-row">
+                        <ui:VisualElement class="connect-row__left">
+                            <ui:VisualElement class="connect-row__dot connect-row__dot--online" />
+                            <ui:VisualElement>
+                                <ui:Label text="IoT Network" class="connect-row__label" />
+                                <ui:Label text="Connected" class="connect-row__status" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Button text="Disconnect" class="connect-btn" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="connect-row">
+                        <ui:VisualElement class="connect-row__left">
+                            <ui:VisualElement class="connect-row__dot connect-row__dot--online" />
+                            <ui:VisualElement>
+                                <ui:Label text="Smart Garage Controller" class="connect-row__label" />
+                                <ui:Label text="3 doors paired" class="connect-row__status" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Button text="Disconnect" class="connect-btn" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="connect-row">
+                        <ui:VisualElement class="connect-row__left">
+                            <ui:VisualElement class="connect-row__dot connect-row__dot--offline" />
+                            <ui:VisualElement>
+                                <ui:Label text="Street Light Controller" class="connect-row__label" />
+                                <ui:Label text="Not paired" class="connect-row__status" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Button text="Connect" class="connect-btn" />
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <!-- ─── END CONNECT POPUP ─── -->
+
+            <!-- ─── SETTINGS POPUP ─── -->
+            <ui:VisualElement name="SettingsPopup" class="popup-overlay">
+                <ui:VisualElement class="popup-card">
+
+                    <ui:VisualElement class="popup-header">
+                        <ui:Label text="Settings" class="popup-title" />
+                        <ui:Button name="CloseSettingsBtn" text="✕" class="popup-close" />
+                    </ui:VisualElement>
+
+                    <ui:Label text="GENERAL" class="popup-section-label" />
+
+                    <ui:VisualElement class="settings-row">
+                        <ui:Label text="Dark mode" class="settings-row__label" />
+                        <ui:Button name="ToggleDarkMode" class="settings-toggle settings-toggle--on">
+                            <ui:VisualElement class="settings-toggle__knob" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="settings-row">
+                        <ui:Label text="Auto-connect on launch" class="settings-row__label" />
+                        <ui:Button name="ToggleAutoConnect" class="settings-toggle settings-toggle--on">
+                            <ui:VisualElement class="settings-toggle__knob" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="settings-row settings-row--last">
+                        <ui:Label text="Show FPS counter" class="settings-row__label" />
+                        <ui:Button name="ToggleFPS" class="settings-toggle">
+                            <ui:VisualElement class="settings-toggle__knob" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:Label text="ABOUT" class="popup-section-label" style="margin-top: 12px;" />
+
+                    <ui:VisualElement class="settings-row settings-row--last">
+                        <ui:Label text="Version" class="settings-row__label" />
+                        <ui:Label text="v1.0.0" class="settings-row__value" />
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <!-- ─── END SETTINGS POPUP ─── -->
+
+        </ui:VisualElement>
+        <!-- ═══════════════════ END MAIN CONTENT ═══════════════════ -->
+
+    </ui:VisualElement>
+</ui:UXML>

@@ -33,26 +33,42 @@ public class Mover : MonoBehaviour
         transform.position = new Vector3(transform.position.x, lockedHeight, transform.position.z);
     }
 
-    void Update()
+void Update()
     {
         HandleCursorToggle();
-        
-        if (!_isCursorFree)
-        {
-            HandleMouseLook();
-        }
 
-        MovePlayer();
+        if (!GarageHUDController.IsAnyPopupOpen)
+        {
+            if (!_isCursorFree)
+                HandleMouseLook();
+
+            MovePlayer();
+        }
     }
 
     /// <summary>
     /// Listens for the Left Alt key to instantly swap between mouse-look flight and UI cursor clicking.
     /// </summary>
-    private void HandleCursorToggle()
+private void HandleCursorToggle()
     {
+        // If this scene is loaded additively (e.g. as a main menu preview),
+        // never touch the cursor - let the active scene manage it.
+        if (gameObject.scene != UnityEngine.SceneManagement.SceneManager.GetActiveScene())
+            return;
+
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
             _isCursorFree = !_isCursorFree;
+        }
+
+        // Force cursor visible whenever a HUD popup is open, regardless of the toggle state.
+        if (GarageHUDController.IsAnyPopupOpen)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
             SetCursorState(_isCursorFree);
         }
     }
