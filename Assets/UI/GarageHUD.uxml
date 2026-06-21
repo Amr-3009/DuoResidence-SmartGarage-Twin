@@ -36,6 +36,11 @@
 
             <ui:VisualElement class="hud-menu-divider" />
 
+            <ui:Button name="MenuItem_WallDashboards" class="hud-menu-item">
+                <ui:VisualElement class="hud-menu-item__icon-box" />
+                <ui:Label text="Wall Dashboards" class="hud-menu-item__label" />
+            </ui:Button>
+
             <ui:Button name="MenuItem_Dashboards" class="hud-menu-item">
                 <ui:VisualElement class="hud-menu-item__icon-box" />
                 <ui:Label text="Dashboards" class="hud-menu-item__label" />

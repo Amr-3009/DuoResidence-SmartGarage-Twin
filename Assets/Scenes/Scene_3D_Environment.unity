@@ -645,6 +645,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GarageHUDController
   mainMenuSceneName: MainMenu
   streetLightsSceneName: StreetLights
+  vrSceneName: Scene_VR_Enviroment
 --- !u!114 &1130386647
 MonoBehaviour:
   m_ObjectHideFlags: 0

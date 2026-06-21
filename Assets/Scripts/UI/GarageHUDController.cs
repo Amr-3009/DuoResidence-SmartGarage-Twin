@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// DuoResidence — Garage HUD Controller
@@ -14,6 +15,7 @@ public class GarageHUDController : MonoBehaviour
     public string mainMenuSceneName     = "MainMenu";
     public string streetLightsSceneName = "StreetLights";
     public string vrSceneName           = "Scene_VR_Enviroment";
+    public string garageSceneName       = "Scene_3D_Environment";
 
     /// <summary>
     /// True whenever any popup (Scenes or Dashboards) is visible.
@@ -54,6 +56,12 @@ private VisualElement _popupOverlay;
             GoToMainMenu();
         };
 
+        root.Q<Button>("MenuItem_WallDashboards").clicked += () =>
+        {
+            CloseHamburgerMenu();
+            _dashboardsController?.ToggleOriginalCanvases();
+        };
+
         root.Q<Button>("MenuItem_Dashboards").clicked += () =>
         {
             CloseHamburgerMenu();
@@ -88,7 +96,7 @@ private VisualElement _popupOverlay;
             if (evt.target == _popupOverlay) ClosePopup();
         });
 
-        root.Q<Button>("PopupCard_Garage").clicked       += ClosePopup;
+        root.Q<Button>("PopupCard_Garage").clicked       += GoToGarage;
         root.Q<Button>("PopupCard_StreetLights").clicked += GoToStreetLights;
         root.Q<Button>("PopupCard_VR").clicked           += GoToVR;
 
@@ -175,6 +183,20 @@ private void Update()
 
     // Scene-navigation shortcuts: both route through LoadingScreenController
     // so a themed loading screen is shown during the scene switch.
+    /// <summary>
+    /// Loads the Smart Garage scene if not already active; otherwise just
+    /// closes the Scenes popup (matches original same-scene click behavior).
+    /// </summary>
+    private void GoToGarage()
+    {
+        if (SceneManager.GetActiveScene().name == garageSceneName)
+        {
+            ClosePopup();
+            return;
+        }
+        LoadingScreenController.LoadScene(garageSceneName, "Smart Garage", "blue");
+    }
+
     private void GoToMainMenu()
         => LoadingScreenController.LoadScene(mainMenuSceneName, "Main Menu", "blue");
 

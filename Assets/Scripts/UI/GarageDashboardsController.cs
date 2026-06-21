@@ -45,6 +45,11 @@ public class GarageDashboardsController : MonoBehaviour
     private HvacDashboardController _hvac;
     private FanDashboardController  _fan;
     private CCTVClient               _cctv;
+    private TwinDashboardController  _wall;
+
+    // ── Manual override: 'M' key forces the 4 original Canvas dashboards
+    // visible/hidden, independent of the new UI Toolkit popup above. ───
+    private bool _originalCanvasesForcedVisible;
 
     // ── UI references ────────────────────────────────────────────────
     private VisualElement _overlay;
@@ -160,7 +165,8 @@ private void Start()
         _fan  = FindObjectOfType<FanDashboardController>(true);
         _cctv = FindObjectOfType<CCTVClient>(true);
 
-        DisableCanvas(FindObjectOfType<TwinDashboardController>(true));
+                _wall = FindObjectOfType<TwinDashboardController>(true);
+        DisableCanvas(_wall);
         DisableCanvas(_hvac);
         DisableCanvas(_fan);
         DisableCanvas(_cctv);
@@ -221,6 +227,44 @@ private void Start()
         if (canvas != null) canvas.enabled = false;
         var raycaster = c.GetComponent<GraphicRaycaster>();
         if (raycaster != null) raycaster.enabled = false;
+    }
+
+    /// <summary>
+    /// Turns the Canvas and GraphicRaycaster back on for an original UGUI
+    /// dashboard, re-enabling rendering and input on it.
+    /// </summary>
+    private void EnableCanvas(Component c)
+    {
+        if (c == null) return;
+        var canvas = c.GetComponent<Canvas>();
+        if (canvas != null) canvas.enabled = true;
+        var raycaster = c.GetComponent<GraphicRaycaster>();
+        if (raycaster != null) raycaster.enabled = true;
+    }
+
+    /// <summary>
+    /// 'M' key handler: force-toggles the 4 original Canvas dashboards
+    /// (Wall/Parking, HVAC, Fans, CCTV) visible/hidden, independent of the
+    /// new UI Toolkit popup's own open/closed state.
+    /// </summary>
+    public void ToggleOriginalCanvases()
+    {
+        _originalCanvasesForcedVisible = !_originalCanvasesForcedVisible;
+
+        if (_originalCanvasesForcedVisible)
+        {
+            EnableCanvas(_wall);
+            EnableCanvas(_hvac);
+            EnableCanvas(_fan);
+            EnableCanvas(_cctv);
+        }
+        else
+        {
+            DisableCanvas(_wall);
+            DisableCanvas(_hvac);
+            DisableCanvas(_fan);
+            DisableCanvas(_cctv);
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────
@@ -370,6 +414,9 @@ private void Start()
     /// </summary>
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.M))
+            ToggleOriginalCanvases();
+
         if (!_overlay.ClassListContains("popup-overlay--visible")) return;
 
         UpdateHvacTab();
