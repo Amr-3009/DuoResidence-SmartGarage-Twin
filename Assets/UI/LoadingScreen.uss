@@ -1,9 +1,14 @@
 
+/* ═══════════════════════════════════════════════════════════════
+   DIGITAL TWIN COMMAND — LoadingScreen.uss
+   Theme: Industrial IoT / Smart City  |  Palette: DESIGN.md
+═══════════════════════════════════════════════════════════════ */
+
 /* ── Root ───────────────────────────────────────────────────── */
 .loading-root {
     width: 100%;
     height: 100%;
-    background-color: rgb(10, 10, 9);
+    background-color: rgb(11, 19, 38);
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -18,14 +23,15 @@
 }
 .brand-watermark__label {
     font-size: 10px;
-    color: rgb(60, 60, 56);
+    color: rgb(76, 215, 246);
     -unity-font-style: bold;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
 }
 .brand-watermark__name {
     font-size: 14px;
-    color: rgb(80, 80, 76);
+    color: rgb(134, 147, 151);
     -unity-font-style: bold;
+    letter-spacing: 1px;
 }
 
 /* ── Center Block ───────────────────────────────────────────── */
@@ -39,10 +45,10 @@
 .scene-icon-wrapper {
     width: 64px;
     height: 64px;
-    border-radius: 16px;
-    background-color: rgb(22, 22, 20);
+    border-radius: 8px;
+    background-color: rgba(23, 31, 51, 0.90);
     border-width: 1px;
-    border-color: rgba(255,255,255,0.10);
+    border-color: rgba(76, 215, 246, 0.25);
     align-items: center;
     justify-content: center;
     margin-bottom: 24px;
@@ -51,29 +57,30 @@
     width: 22px;
     height: 22px;
     border-radius: 11px;
-    background-color: rgb(70, 140, 220);
+    background-color: rgb(76, 215, 246);
 }
 
 /* Scene name + status */
 .scene-name {
     font-size: 22px;
     -unity-font-style: bold;
-    color: rgb(220, 220, 215);
+    color: rgb(218, 226, 253);
     margin-bottom: 6px;
     -unity-text-align: middle-center;
 }
 .loading-status {
     font-size: 13px;
-    color: rgb(90, 90, 86);
+    color: rgb(134, 147, 151);
     margin-bottom: 36px;
     -unity-text-align: middle-center;
+    letter-spacing: 1px;
 }
 
 /* ── Progress Bar ───────────────────────────────────────────── */
 .progress-track {
     width: 340px;
     height: 3px;
-    background-color: rgb(30, 30, 28);
+    background-color: rgba(34, 42, 61, 0.90);
     border-radius: 4px;
     margin-bottom: 14px;
     overflow: hidden;
@@ -81,7 +88,7 @@
 .progress-fill {
     height: 3px;
     width: 0%;
-    background-color: rgb(70, 140, 220);
+    background-color: rgb(76, 215, 246);
     border-radius: 4px;
     transition-property: width;
     transition-duration: 0.3s;
@@ -90,9 +97,10 @@
 /* Percentage label */
 .progress-pct {
     font-size: 12px;
-    color: rgb(80, 80, 76);
+    color: rgb(134, 147, 151);
     -unity-text-align: middle-center;
     margin-bottom: 0;
+    letter-spacing: 1px;
 }
 
 /* ── Bottom hint ────────────────────────────────────────────── */
@@ -106,12 +114,13 @@
     width: 4px;
     height: 4px;
     border-radius: 2px;
-    background-color: rgb(50, 50, 46);
+    background-color: rgb(61, 73, 76);
     margin-left: 6px;
     margin-right: 6px;
 }
 .bottom-hint__text {
     font-size: 11px;
-    color: rgb(55, 55, 51);
+    color: rgb(61, 73, 76);
     -unity-text-align: middle-center;
+    letter-spacing: 0.5px;
 }
