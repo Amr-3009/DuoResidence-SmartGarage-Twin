@@ -1625,6 +1625,18 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5536352024425101253, guid: 2fca1ffd8104eb449b7366d6e099984f, type: 3}
+      propertyPath: wallPrefab
+      value: 
+      objectReference: {fileID: 1097700510422897344, guid: 8ec5e31f5f5159b44a9ceacc7868c63d, type: 3}
+    - target: {fileID: 5536352024425101253, guid: 2fca1ffd8104eb449b7366d6e099984f, type: 3}
+      propertyPath: pavementPrefab
+      value: 
+      objectReference: {fileID: 1949592070097229914, guid: c753489abcd91c848848eb55221dc471, type: 3}
+    - target: {fileID: 5536352024425101253, guid: 2fca1ffd8104eb449b7366d6e099984f, type: 3}
+      propertyPath: yellowLinePrefab
+      value: 
+      objectReference: {fileID: 3776765370451230169, guid: 39826ea77690e8b41abf5242deb42940, type: 3}
     - target: {fileID: 5744569444384288989, guid: 2fca1ffd8104eb449b7366d6e099984f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2321,6 +2333,7 @@ MonoBehaviour:
   mainMenuSceneName: MainMenu
   streetLightsSceneName: StreetLights
   vrSceneName: Scene_VR_Enviroment
+  garageSceneName: Scene_3D_Environment
 --- !u!114 &1969080126
 MonoBehaviour:
   m_ObjectHideFlags: 0
