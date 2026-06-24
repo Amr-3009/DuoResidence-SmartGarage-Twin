@@ -29,9 +29,9 @@ public class HvacDashboardController : MonoBehaviour
     [SerializeField] private float maxNOLimits = 100f;   // Project A Max
 
     [Header("Dynamic Progress Palette")]
-    [SerializeField] private Color safeColor = Color.green;
-    [SerializeField] private Color cautionColor = Color.yellow;
-    [SerializeField] private Color dangerColor = Color.red;
+    [SerializeField] private Color safeColor    = new Color(0.239f, 0.863f, 0.518f, 1f); // #3ddc84
+    [SerializeField] private Color cautionColor = new Color(1.000f, 0.596f, 0.000f, 1f); // #ff9800
+    [SerializeField] private Color dangerColor  = new Color(0.878f, 0.361f, 0.361f, 1f); // #e05c5c
 
     // ── Read-only accessors for the UI Toolkit dashboard bridge ──────
     // (GarageDashboardsController polls these to mirror live values

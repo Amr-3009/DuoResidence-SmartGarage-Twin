@@ -1,7 +1,15 @@
 
 /* ═══════════════════════════════════════════════════════════════
-   DIGITAL TWIN COMMAND — GarageHUD.uss
-   Theme: Industrial IoT / Smart City  |  Palette: DESIGN.md
+   SMART GARAGE HUD — GarageHUD.uss  v5.1
+   Theme : smart_garage_dashboard_theme_v2 (dark panel / IoT)
+   ─────────────────────────────────────────────────────────────
+   DESIGN TOKENS
+   Scene bg    #1a1c21   Panel bg   #0d0f12
+   Border      #2e3855   Border dim #2e3038
+   Primary     #e0eeff   Muted      #6a8caf   Dimmer #4a7aab
+   Accent Wall #2979ff   Accent HVAC  #ff9800
+   Accent Fan  #00bcd4   Accent CCTV  #9c27b0
+   OK          #3ddc84   Danger #e05c5c
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── HUD Root ───────────────────────────────────────────────── */
@@ -18,42 +26,34 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
+    padding: 14px 18px;
     background-color: rgba(0,0,0,0);
 }
+.hud-topbar__left  { flex-direction: row; align-items: center; }
+.hud-topbar__right { flex-direction: row; align-items: center; }
 
-.hud-topbar__left {
-    flex-direction: row;
-    align-items: center;
-}
-
-.hud-topbar__right {
-    flex-direction: row;
-    align-items: center;
-}
-
-/* ── Hamburger Menu Button ─────────────────────────────────── */
+/* ── Hamburger Button ───────────────────────────────────────── */
 .hamburger-btn {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: rgba(11, 19, 38, 0.80);
-    border-radius: 4px;
+    background-color: rgba(13,15,18,0.88);
+    border-radius: 5px;
     border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.18);
+    border-color: rgba(46,56,85,0.70);
     padding: 0;
 }
 .hamburger-btn:hover {
-    background-color: rgba(11, 19, 38, 0.95);
-    border-color: rgba(76, 215, 246, 0.45);
+    background-color: rgba(13,15,18,1.00);
+    border-color: rgba(41,121,255,0.55);
 }
 .hamburger-btn__bar {
-    width: 18px;
+    width: 16px;
     height: 2px;
     border-radius: 1px;
-    background-color: rgb(218, 226, 253);
+    background-color: rgb(224,238,255);
     margin: 2px 0;
 }
 
@@ -61,554 +61,718 @@
 .scene-pill {
     flex-direction: row;
     align-items: center;
-    background-color: rgba(11, 19, 38, 0.65);
+    background-color: rgba(13,15,18,0.78);
     border-radius: 6px;
     border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.15);
-    padding: 5px 14px;
+    border-color: rgba(46,56,85,0.70);
+    padding: 4px 12px;
 }
 .scene-pill__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 4px;
-    background-color: rgb(76, 215, 246);
-    margin-right: 7px;
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    background-color: rgb(61,220,132);
+    margin-right: 6px;
 }
 .scene-pill__label {
-    font-size: 12px;
-    color: rgb(188, 201, 205);
+    font-size: 11px;
+    color: rgb(106,140,175);
+    letter-spacing: 0.5px;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   HAMBURGER DROPDOWN MENU
-══════════════════════════════════════════════════════════════ */
+/* ── Hamburger Dropdown ─────────────────────────────────────── */
 .hud-menu-dropdown {
     position: absolute;
-    top: 64px;
-    left: 20px;
-    width: 200px;
-    background-color: rgb(19, 27, 46);
-    border-radius: 4px;
+    top: 58px;
+    left: 18px;
+    width: 205px;
+    background-color: rgba(13,15,18,0.97);
+    border-radius: 5px;
     border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.18);
+    border-color: rgba(46,56,85,0.70);
     flex-direction: column;
-    padding: 6px;
-
+    padding: 5px;
     opacity: 0;
-    scale: 1 0.85;
-    translate: 0px -8px;
+    scale: 1 0.88;
+    translate: 0px -6px;
     transform-origin: top left;
-
     transition-property: opacity, scale, translate;
-    transition-duration: 0.16s;
+    transition-duration: 0.14s;
     transition-timing-function: ease-out;
 }
-
 .hud-menu-dropdown--open {
     opacity: 1;
     scale: 1 1;
     translate: 0px 0px;
 }
-
 .hud-menu-item {
     flex-direction: row;
     align-items: center;
     background-color: rgba(0,0,0,0);
     border-width: 0;
     border-radius: 4px;
-    padding: 10px 12px;
+    padding: 9px 11px;
     margin: 0;
 }
-.hud-menu-item:hover {
-    background-color: rgba(76, 215, 246, 0.08);
-}
-
+.hud-menu-item:hover { background-color: rgba(41,121,255,0.09); }
 .hud-menu-item__icon {
-    font-size: 13px;
+    font-size: 12px;
     -unity-font-style: bold;
-    color: rgb(134, 147, 151);
-    margin-right: 10px;
-    width: 14px;
+    color: rgb(106,140,175);
+    margin-right: 9px;
+    width: 13px;
     -unity-text-align: middle-center;
 }
-
+.hud-menu-item__icon--arrow { color: rgb(224,238,255); }
 .hud-menu-item__icon-box {
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
     border-radius: 3px;
-    background-color: rgb(76, 215, 246);
-    margin-right: 10px;
+    background-color: rgba(41,121,255,0.45);
+    margin-right: 9px;
 }
-
 .hud-menu-item__label {
-    font-size: 13px;
-    color: rgb(218, 226, 253);
+    font-size: 12px;
+    color: rgb(224,238,255);
     -unity-font-style: bold;
+    letter-spacing: 0.3px;
 }
-
 .hud-menu-divider {
     height: 1px;
-    background-color: rgba(76, 215, 246, 0.10);
-    margin: 4px 6px;
+    background-color: rgba(46,56,85,0.50);
+    margin: 3px 5px;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   POPUP OVERLAY
-══════════════════════════════════════════════════════════════ */
+/* ── Popup Overlay ──────────────────────────────────────────── */
 .popup-overlay {
     position: absolute;
     left: 0; top: 0; right: 0; bottom: 0;
-    background-color: rgba(6, 14, 32, 0.75);
+    background-color: rgba(6,8,14,0.82);
     align-items: center;
     justify-content: center;
     display: none;
 }
+.popup-overlay--visible { display: flex; }
 
-.popup-overlay--visible {
-    display: flex;
-}
-
-/* ── Popup Card (glassmorphic) ──────────────────────────────── */
+/* ── Popup Card ─────────────────────────────────────────────── */
 .popup-card {
-    width: 520px;
-    background-color: rgba(23, 31, 51, 0.90);
+    width: 500px;
+    background-color: rgba(13,15,18,0.96);
     border-radius: 8px;
     border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.18);
-    padding: 24px;
+    border-color: rgba(46,56,85,0.70);
+    padding: 20px;
     flex-direction: column;
 }
-
 .popup-card--dashboards {
-    width: 740px;
-    max-height: 640px;
+    width: 820px;
+    max-height: 700px;
 }
-
 .popup-header {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
-
 .popup-title {
-    font-size: 16px;
+    font-size: 13px;
     -unity-font-style: bold;
-    color: rgb(218, 226, 253);
+    color: rgb(224,238,255);
+    letter-spacing: 0.8px;
+    -unity-text-align: upper-left;
 }
-
 .popup-close {
-    width: 28px;
-    height: 28px;
-    border-radius: 4px;
-    background-color: rgba(76, 215, 246, 0.08);
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    background-color: rgba(46,56,85,0.30);
     border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.20);
+    border-color: rgba(46,56,85,0.70);
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    color: rgb(134, 147, 151);
+    font-size: 12px;
+    color: rgb(106,140,175);
 }
 .popup-close:hover {
-    background-color: rgba(76, 215, 246, 0.18);
-    color: rgb(76, 215, 246);
+    background-color: rgba(224,92,92,0.16);
+    border-color: rgba(224,92,92,0.45);
+    color: rgb(224,92,92);
 }
-
-/* ── Popup Section Label ────────────────────────────────────── */
 .popup-section-label {
-    font-size: 10px;
+    font-size: 9px;
     -unity-font-style: bold;
-    color: rgb(134, 147, 151);
-    letter-spacing: 1.5px;
-    margin-bottom: 10px;
+    color: rgb(106,140,175);
+    letter-spacing: 1.8px;
+    margin-bottom: 8px;
+    -unity-text-align: upper-left;
 }
-
-/* ── Popup Scene Grid ───────────────────────────────────────── */
 .popup-grid {
     flex-direction: row;
     flex-wrap: wrap;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
-
 .popup-card-item {
-    width: 140px;
-    background-color: rgba(34, 42, 61, 0.90);
-    border-radius: 8px;
+    width: 135px;
+    background-color: rgba(26,28,33,0.98);
+    border-radius: 7px;
     border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.12);
-    padding: 14px 12px 10px 12px;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    border-color: rgba(46,56,85,0.55);
+    padding: 12px 10px 8px 10px;
+    margin-right: 9px;
+    margin-bottom: 9px;
     flex-direction: column;
 }
 .popup-card-item:hover {
-    border-color: rgba(76, 215, 246, 0.40);
-    background-color: rgba(45, 52, 73, 0.95);
+    border-color: rgba(41,121,255,0.40);
+    background-color: rgba(26,28,33,1.00);
 }
 .popup-card-item--active {
-    border-color: rgba(76, 215, 246, 0.65);
-    background-color: rgba(76, 215, 246, 0.10);
+    border-color: rgba(41,121,255,0.55);
+    background-color: rgba(41,121,255,0.07);
 }
-.popup-card-item--locked {
-    opacity: 0.35;
-}
-.popup-card-item--locked:hover {
-    border-color: rgba(76, 215, 246, 0.12);
-    background-color: rgba(34, 42, 61, 0.90);
-}
-
+.popup-card-item--locked { opacity: 0.32; }
 .popup-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
-    margin-bottom: 8px;
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    margin-bottom: 7px;
     align-items: center;
     justify-content: center;
 }
-.popup-icon--blue   { background-color: rgba(76, 215, 246, 0.14); }
-.popup-icon--amber  { background-color: rgba(255, 184, 115, 0.14); }
-.popup-icon--gray   { background-color: rgba(45, 52, 73, 0.85); border-width:1px; border-color: rgba(76, 215, 246, 0.12); }
-
-.popup-icon__dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-}
-.popup-icon--blue  .popup-icon__dot { background-color: rgb(76, 215, 246); }
-.popup-icon--amber .popup-icon__dot { background-color: rgb(255, 184, 115); }
-.popup-icon--gray  .popup-icon__dot { background-color: rgb(61, 73, 76); }
-
+.popup-icon--blue   { background-color: rgba(41,121,255,0.13); }
+.popup-icon--amber  { background-color: rgba(255,152,0,0.13); }
+.popup-icon--gray   { background-color: rgba(26,28,33,0.95); border-width:1px; border-color: rgba(46,56,85,0.50); }
+.popup-icon__dot { width: 9px; height: 9px; border-radius: 5px; }
+.popup-icon--blue  .popup-icon__dot { background-color: rgb(41,121,255); }
+.popup-icon--amber .popup-icon__dot { background-color: rgb(255,152,0); }
+.popup-icon--gray  .popup-icon__dot { background-color: rgb(106,140,175); }
 .popup-card-item__name {
-    font-size: 12px;
+    font-size: 11px;
     -unity-font-style: bold;
-    color: rgb(218, 226, 253);
+    color: rgb(224,238,255);
     margin-bottom: 2px;
 }
-.popup-card-item__meta {
-    font-size: 10px;
-    color: rgb(134, 147, 151);
-}
+.popup-card-item__meta { font-size: 9px; color: rgb(106,140,175); }
 
-/* ══════════════════════════════════════════════════════════════
-   DASHBOARDS POPUP
-══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   DASHBOARDS POPUP — v2 theme
+═══════════════════════════════════════════════════════════════ */
 
-/* ── Tab Bar ──────────────────────────────────────────────────── */
+/* ── Tab Bar ────────────────────────────────────────────────── */
 .dash-tabbar {
     flex-direction: row;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     border-bottom-width: 1px;
-    border-bottom-color: rgba(76, 215, 246, 0.10);
+    border-bottom-color: rgba(46,56,85,0.50);
+    background-color: rgba(13,15,18,0.70);
+    border-radius: 5px 5px 0 0;
+    padding: 3px 3px 0 3px;
 }
-
 .dash-tab {
-    font-size: 12px;
+    font-size: 10px;
     -unity-font-style: bold;
-    color: rgb(134, 147, 151);
+    color: rgb(106,140,175);
     background-color: rgba(0,0,0,0);
     border-width: 0;
     border-bottom-width: 2px;
     border-bottom-color: rgba(0,0,0,0);
-    border-radius: 0;
-    padding: 8px 16px;
-    margin-right: 4px;
+    border-radius: 4px 4px 0 0;
+    padding: 7px 15px;
+    margin-right: 2px;
     letter-spacing: 1px;
+    transition-property: color, background-color, border-bottom-color;
+    transition-duration: 0.12s;
 }
-.dash-tab:hover {
-    color: rgb(218, 226, 253);
+.dash-tab:hover { color: rgb(224,238,255); background-color: rgba(46,56,85,0.22); }
+
+.dash-tab--active-parking { color: rgb(41,121,255);  border-bottom-color: rgb(41,121,255);  background-color: rgba(41,121,255,0.07); }
+.dash-tab--active-hvac    { color: rgb(255,152,0);   border-bottom-color: rgb(255,152,0);   background-color: rgba(255,152,0,0.07); }
+.dash-tab--active-fans    { color: rgb(0,188,212);   border-bottom-color: rgb(0,188,212);   background-color: rgba(0,188,212,0.07); }
+.dash-tab--active-cctv    { color: rgb(156,39,176);  border-bottom-color: rgb(156,39,176);  background-color: rgba(156,39,176,0.07); }
+.dash-tab--active         { color: rgb(41,121,255);  border-bottom-color: rgb(41,121,255);  background-color: rgba(41,121,255,0.07); }
+
+/* ── Tab Content ────────────────────────────────────────────── */
+.dash-tab-content { flex-direction: column; }
+
+/* ── v2 Dash Panel — accent stripe on top via border-top ─────── */
+.dash-panel {
+    background-color: rgb(13,15,18);
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: rgba(46,56,85,0.65);
+    border-top-width: 2px;
+    border-top-color: rgb(41,121,255);
+    padding: 9px 11px;
+    margin-bottom: 8px;
 }
-.dash-tab--active {
-    color: rgb(76, 215, 246);
-    border-bottom-color: rgb(76, 215, 246);
+.dash-panel--hvac  { border-top-color: rgb(255,152,0); }
+.dash-panel--fans  { border-top-color: rgb(0,188,212); }
+.dash-panel--cctv  { border-top-color: rgb(156,39,176); }
+
+/* ── Shared Section Label ───────────────────────────────────── */
+.dash-section-label {
+    font-size: 9px;
+    -unity-font-style: bold;
+    color: rgb(106,140,175);
+    letter-spacing: 1.5px;
+    margin-bottom: 7px;
+    -unity-text-align: upper-left;
 }
 
-/* ── Tab Content ──────────────────────────────────────────────── */
-.dash-tab-content {
-    flex-direction: column;
+/* ── Status Pills ───────────────────────────────────────────── */
+.dash-status-pill {
+    font-size: 9px;
+    -unity-font-style: bold;
+    border-radius: 3px;
+    padding: 3px 8px;
+    letter-spacing: 0.8px;
+    border-width: 1px;
+    -unity-text-align: middle-center;
 }
+.dash-status-pill--ok   { background-color: rgba(61,220,132,0.10); color: rgb(61,220,132);  border-color: rgba(61,220,132,0.25); }
+.dash-status-pill--warn { background-color: rgba(255,152,0,0.10);  color: rgb(255,152,0);   border-color: rgba(255,152,0,0.25); }
+.dash-status-pill--off  { background-color: rgba(224,92,92,0.10);  color: rgb(224,92,92);   border-color: rgba(224,92,92,0.25); }
+.dash-status-pill--live { background-color: rgba(41,121,255,0.10); color: rgb(41,121,255);  border-color: rgba(41,121,255,0.25); }
 
-/* ── Progress Bars ────────────────────────────────────────────── */
+/* ── Progress Bar (HVAC fills) ──────────────────────────────── */
 .dash-progress-track {
     width: 100%;
-    height: 10px;
-    background-color: rgba(34, 42, 61, 0.90);
-    border-radius: 6px;
-    border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.10);
-    margin-bottom: 8px;
+    height: 5px;
+    background-color: rgba(26,42,58,1.00);
+    border-radius: 3px;
+    border-width: 0;
+    margin-bottom: 5px;
     overflow: hidden;
 }
 .dash-progress-fill {
     height: 100%;
     width: 0%;
-    background-color: rgb(76, 215, 246);
-    border-radius: 6px;
+    background-color: rgb(41,121,255);
+    border-radius: 3px;
+    transition-property: width, background-color;
+    transition-duration: 0.32s;
 }
 
-/* ── Large Data Display ───────────────────────────────────────── */
-.dash-value-label {
-    font-size: 22px;
-    -unity-font-style: bold;
-    color: rgb(76, 215, 246);
-    margin-bottom: 4px;
-}
-
-.dash-meta-label {
-    font-size: 12px;
-    color: rgb(134, 147, 151);
-    margin-bottom: 16px;
-    letter-spacing: 0.5px;
-}
-
-/* ── Status Pills ─────────────────────────────────────────────── */
-.dash-status-pill {
-    font-size: 11px;
-    -unity-font-style: bold;
-    border-radius: 6px;
-    padding: 5px 14px;
-    letter-spacing: 1px;
-}
-.dash-status-pill--ok {
-    background-color: rgba(76, 215, 246, 0.12);
-    color: rgb(76, 215, 246);
-}
-.dash-status-pill--warn {
-    background-color: rgba(255, 184, 115, 0.12);
-    color: rgb(255, 184, 115);
-}
-.dash-status-pill--off {
-    background-color: rgba(255, 180, 171, 0.12);
-    color: rgb(255, 180, 171);
-}
-
+/* ═══════════════════════════════════════════════════════════════
+   PARKING TAB
+═══════════════════════════════════════════════════════════════ */
 .dash-summary-row {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 10px;
+}
+.dash-capacity-pct {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: rgb(224,238,255);
+}
+
+/* v2 gauge: a bordered circle simulating a ring */
+.dash-gauge-row {
+    flex-direction: row;
+    align-items: center;
     margin-bottom: 12px;
 }
-
-.dash-capacity-pct {
-    font-size: 16px;
+.dash-gauge-wrap {
+    width: 90px;
+    height: 90px;
+    border-radius: 45px;
+    background-color: rgba(13,21,40,0.90);
+    border-width: 8px;
+    border-color: rgb(41,121,255);
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+    transition-property: border-color;
+    transition-duration: 0.32s;
+}
+.dash-gauge-track {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 45px;
+    border-width: 8px;
+    border-color: rgba(26,44,64,0.90);
+    background-color: rgba(0,0,0,0);
+}
+.dash-gauge-arc {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 45px;
+    border-width: 8px;
+    border-color: rgb(41,121,255);
+    background-color: rgba(0,0,0,0);
+    transition-property: border-color;
+    transition-duration: 0.32s;
+}
+.dash-gauge-center {
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.dash-gauge-pct {
+    font-size: 18px;
     -unity-font-style: bold;
-    color: rgb(218, 226, 253);
+    color: rgb(224,238,255);
+    -unity-text-align: middle-center;
+    margin-bottom: 0px;
+}
+.dash-gauge-sub {
+    font-size: 8px;
+    color: rgb(41,121,255);
+    -unity-text-align: middle-center;
+    letter-spacing: 0.3px;
+}
+.dash-gauge-count {
+    font-size: 8px;
+    color: rgb(74,122,171);
+    -unity-text-align: middle-center;
+    margin-top: 1px;
+}
+.dash-gauge-arc--ok     { border-color: rgb(61,220,132); }
+.dash-gauge-arc--warn   { border-color: rgb(255,152,0); }
+.dash-gauge-arc--danger { border-color: rgb(224,92,92); }
+.dash-gauge-sub--ok     { color: rgb(61,220,132); }
+.dash-gauge-sub--warn   { color: rgb(255,152,0); }
+.dash-gauge-sub--danger { color: rgb(224,92,92); }
+.dash-gauge-wrap--ok    { border-color: rgb(61,220,132); }
+.dash-gauge-wrap--warn  { border-color: rgb(255,152,0); }
+.dash-gauge-wrap--danger{ border-color: rgb(224,92,92); }
+
+.dash-gauge-meta {
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+}
+.dash-meta-label {
+    font-size: 10px;
+    color: rgb(106,140,175);
+    margin-bottom: 10px;
+    letter-spacing: 0.3px;
 }
 
-/* ── Parking Lanes ────────────────────────────────────────────── */
-.dash-lanes-row {
+/* Lane grid */
+.dash-lanes-row { flex-direction: row; justify-content: space-between; }
+.dash-lane-col  { flex-direction: column; width: 32%; }
+.dash-lane-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+.dash-lane-label {
+    font-size: 9px;
+    -unity-font-style: bold;
+    color: rgb(74,122,171);
+    letter-spacing: 0.3px;
+}
+.dash-lane-badge {
+    font-size: 9px;
+    -unity-font-style: bold;
+    border-radius: 2px;
+    padding: 1px 6px;
+    border-width: 1px;
+    background-color: rgba(61,220,132,0.09);
+    color: rgb(61,220,132);
+    border-color: rgba(61,220,132,0.24);
+}
+.dash-lane-badge--warn   { background-color: rgba(255,152,0,0.09); color: rgb(255,152,0);  border-color: rgba(255,152,0,0.24); }
+.dash-lane-badge--danger { background-color: rgba(224,92,92,0.09); color: rgb(224,92,92); border-color: rgba(224,92,92,0.24); }
+
+/* ── Parking grid tiles — labeled slots ────────────────────── */
+.dash-parking-grid { flex-direction: row; flex-wrap: wrap; gap: 2px; }
+
+/* Each tile is now a Label showing the slot ID (e.g. A01).
+   Width is set to fit 3 characters at font-size 7 with padding. */
+.dash-parking-tile {
+    width: 26px;
+    height: 16px;
+    border-radius: 2px;
+    background-color: rgba(30,58,42,1.00);
+    border-width: 1px;
+    border-color: rgba(42,90,58,0.80);
+    /* Label text */
+    font-size: 7px;
+    -unity-font-style: bold;
+    color: rgba(61,220,132,0.70);
+    -unity-text-align: middle-center;
+    overflow: hidden;
+    /* USS doesn't support letter-spacing on very small text well — keep default */
+    transition-property: background-color, border-color, color;
+    transition-duration: 0.18s;
+    /* Remove Label's default padding */
+    padding: 0;
+    margin: 0;
+}
+
+/* Occupied state — red background, dim text so ID is still legible */
+.dash-parking-tile--occupied {
+    background-color: rgba(200,60,60,0.80);
+    border-color: rgba(224,92,92,0.00);
+    border-width: 0;
+    color: rgba(255,200,200,0.60);
+}
+
+.dash-lane-legend { flex-direction: row; margin-top: 5px; align-items: center; }
+.dash-legend-dot  { width: 7px; height: 7px; border-radius: 2px; margin-right: 3px; }
+.dash-legend-dot--free     { background-color: rgba(42,90,58,0.90); border-width: 1px; border-color: rgba(42,90,58,1.00); }
+.dash-legend-dot--occupied { background-color: rgba(224,92,92,0.75); }
+.dash-legend-text { font-size: 8px; color: rgb(74,122,171); margin-right: 8px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   HVAC TAB
+═══════════════════════════════════════════════════════════════ */
+.dash-hvac-row {
     flex-direction: row;
     justify-content: space-between;
+    margin-bottom: 10px;
 }
-
-.dash-lane-col {
-    flex-direction: column;
-    width: 32%;
+.dash-hvac-card {
+    flex-grow: 1;
+    background-color: rgba(13,15,18,1.00);
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: rgba(46,56,85,0.55);
+    padding: 12px 12px;
+    align-items: center;
+    margin-right: 8px;
 }
-
-.dash-lane-label {
-    font-size: 12px;
-    -unity-font-style: bold;
-    color: rgb(188, 201, 205);
-    margin-bottom: 8px;
-    letter-spacing: 0.5px;
-}
-
-.dash-parking-grid {
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-
-.dash-parking-tile {
-    width: 14px;
-    height: 14px;
-    margin: 1px;
+.dash-arc-wrap { width: 100%; align-items: center; margin-bottom: 5px; }
+.dash-progress-track--hvac {
+    width: 100%;
+    height: 5px;
+    background-color: rgba(26,42,58,1.00);
     border-radius: 3px;
-    background-color: rgb(76, 215, 246);
-}
-.dash-parking-tile--occupied {
-    background-color: rgb(255, 180, 171);
-}
-
-/* ── Fan Tab ──────────────────────────────────────────────────── */
-.dash-fan-row {
-    flex-direction: row;
+    overflow: hidden;
     margin-bottom: 6px;
 }
-.dash-fan-card {
-    flex-grow: 1;
-    background-color: rgba(34, 42, 61, 0.90);
-    border-radius: 8px;
-    border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.12);
-    padding: 14px 16px;
-    margin-right: 10px;
+/* Gas value label — amber for HVAC */
+.dash-value-label {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: rgb(255,152,0);
+    -unity-text-align: middle-center;
+    margin-bottom: 1px;
 }
-.dash-fan-card:last-of-type {
-    margin-right: 0;
+.dash-value-label--ok { color: rgb(41,121,255); }
+.dash-unit-label {
+    font-size: 9px;
+    color: rgb(74,122,171);
+    -unity-text-align: middle-center;
+    letter-spacing: 0.3px;
+    margin-bottom: 5px;
+}
+.dash-threshold-label { font-size: 8px; color: rgb(224,92,92); letter-spacing: 0.3px; }
+.dash-trend-label { font-size: 16px; -unity-font-style: bold; color: rgb(106,140,175); margin-left: 4px; }
+
+/* Gas-name mini-label above the value */
+.dash-gas-name {
+    font-size: 8px;
+    -unity-font-style: bold;
+    color: rgb(106,140,175);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    -unity-text-align: middle-center;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   FAN TAB
+═══════════════════════════════════════════════════════════════ */
+.dash-fan-row { flex-direction: row; margin-bottom: 8px; }
+.dash-fan-card {
+    flex-grow: 1;
+    background-color: rgba(17,20,24,1.00);
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: rgba(30,48,69,0.90);
+    padding: 10px 12px;
+    margin-right: 8px;
+}
+.dash-fan-name {
+    font-size: 8px;
+    -unity-font-style: bold;
+    color: rgb(74,122,171);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+.dash-fan-rpm-row { flex-direction: row; align-items: baseline; margin-bottom: 6px; }
+.dash-value-label--fan { font-size: 22px; -unity-font-style: bold; color: rgb(224,238,255); }
+.dash-fan-unit { font-size: 9px; color: rgb(74,122,171); margin-left: 3px; }
+
+/* v2 mini bar segments */
+.dash-rpm-bar-wrap { flex-direction: row; align-items: center; margin-bottom: 3px; }
+.dash-rpm-segment {
+    width: 12px;
+    height: 6px;
+    border-radius: 1px;
+    background-color: rgba(30,48,69,1.00);
+    margin-right: 2px;
+}
+.dash-rpm-segment--filled        { background-color: rgb(0,188,212); }
+.dash-rpm-segment--filled-high   { background-color: rgb(255,152,0); }
+.dash-rpm-segment--filled-danger { background-color: rgb(224,92,92); }
+
+/* Fan controls row */
 .dash-fan-controls {
     flex-direction: row;
     align-items: center;
+    background-color: rgba(17,20,24,1.00);
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: rgba(46,56,85,0.55);
+    padding: 10px 12px;
 }
-
-.dash-dropdown {
-    width: 140px;
-    margin-right: 12px;
+.dash-dropdown { width: 145px; margin-right: 10px; }
+.dash-dropdown .unity-base-dropdown__input {
+    background-color: rgba(17,20,24,1.00);
+    border-width: 1px;
+    border-color: rgba(30,48,69,0.90);
+    border-radius: 3px;
+    color: rgb(224,238,255);
+    font-size: 11px;
+    padding: 5px 9px;
 }
+.dash-dropdown .unity-base-dropdown__arrow { color: rgb(74,122,171); }
 
-/* ── Primary Action Button ────────────────────────────────────── */
+/* ── Action Buttons ─────────────────────────────────────────── */
 .dash-action-btn {
     flex-grow: 1;
-    font-size: 12px;
+    font-size: 10px;
     -unity-font-style: bold;
-    color: rgb(218, 226, 253);
-    background-color: rgba(76, 215, 246, 0.14);
+    color: rgb(224,238,255);
+    background-color: rgba(41,121,255,0.10);
     border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.35);
+    border-color: rgba(41,121,255,0.32);
     border-radius: 4px;
-    padding: 10px 16px;
-    letter-spacing: 1px;
+    padding: 8px 14px;
+    letter-spacing: 0.8px;
+    transition-property: background-color, border-color;
+    transition-duration: 0.12s;
 }
-.dash-action-btn:hover {
-    background-color: rgba(76, 215, 246, 0.26);
-    border-color: rgba(76, 215, 246, 0.65);
-}
-.dash-action-btn:disabled {
-    opacity: 0.35;
-}
+.dash-action-btn:hover   { background-color: rgba(41,121,255,0.20); border-color: rgba(41,121,255,0.60); }
+.dash-action-btn:disabled { opacity: 0.32; }
+.dash-action-btn--green { background-color: rgba(61,220,132,0.09); border-color: rgba(61,220,132,0.28); color: rgb(61,220,132); }
+.dash-action-btn--green:hover { background-color: rgba(61,220,132,0.20); border-color: rgba(61,220,132,0.52); }
+.dash-action-btn--red   { background-color: rgba(224,92,92,0.09); border-color: rgba(224,92,92,0.28);  color: rgb(224,92,92); }
+.dash-action-btn--red:hover   { background-color: rgba(224,92,92,0.20); border-color: rgba(224,92,92,0.52); }
+/* Fan-accent override for the +RPM button */
+.dash-action-btn--fans  { border-color: rgba(0,188,212,0.40); color: rgb(0,188,212); background-color: rgba(0,188,212,0.07); }
+.dash-action-btn--fans:hover { background-color: rgba(0,188,212,0.16); border-color: rgba(0,188,212,0.65); }
 
-.dash-action-btn--green {
-    background-color: rgba(76, 215, 246, 0.10);
-    border-color: rgba(76, 215, 246, 0.28);
+/* ═══════════════════════════════════════════════════════════════
+   CCTV TAB
+═══════════════════════════════════════════════════════════════ */
+.dash-cctv-top { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.dash-cctv-viewport-wrap {
+    width: 100%;
+    background-color: rgb(5,6,7);
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: rgba(42,26,58,0.90);
+    overflow: hidden;
+    margin-bottom: 8px;
+    position: relative;
 }
-.dash-action-btn--green:hover {
-    background-color: rgba(76, 215, 246, 0.22);
-}
-
-/* ── CCTV Tab ─────────────────────────────────────────────────── */
-.dash-cctv-top {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-}
-
 .dash-cctv-stream {
     width: 100%;
-    height: 220px;
-    background-color: rgb(6, 14, 32);
-    border-radius: 8px;
-    border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.14);
+    height: 180px;
+    background-color: rgb(5,6,7);
     -unity-background-scale-mode: scale-and-crop;
-    margin-bottom: 12px;
+}
+.dash-cctv-rec-wrap {
+    position: absolute;
+    top: 6px;
+    right: 7px;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(5,6,7,0.65);
+    border-radius: 3px;
+    padding: 2px 7px;
+}
+.dash-cctv-rec-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    background-color: rgb(255,61,61);
+    margin-right: 4px;
+}
+.dash-cctv-rec-dot--inactive { background-color: rgba(224,92,92,0.22); }
+.dash-cctv-rec-label {
+    font-size: 8px;
+    -unity-font-style: bold;
+    color: rgb(255,61,61);
+    letter-spacing: 1px;
+}
+.dash-cctv-res-stamp {
+    position: absolute;
+    bottom: 5px;
+    left: 7px;
+    font-size: 8px;
+    color: rgba(200,200,200,0.32);
+    letter-spacing: 0.3px;
+}
+/* Cam label top-left */
+.dash-cctv-cam-label {
+    position: absolute;
+    top: 5px;
+    left: 7px;
+    font-size: 8px;
+    color: rgba(200,200,200,0.50);
+    letter-spacing: 0.3px;
 }
 
+/* Camera buttons — v2 grid */
 .dash-cctv-buttons {
     flex-direction: row;
     flex-wrap: wrap;
     margin-bottom: 8px;
 }
-
 .dash-cam-btn {
-    font-size: 11px;
+    font-size: 9px;
     -unity-font-style: bold;
-    color: rgb(188, 201, 205);
-    background-color: rgba(34, 42, 61, 0.90);
+    color: rgb(74,122,171);
+    background-color: rgba(17,20,24,0.95);
     border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.12);
-    border-radius: 4px;
-    padding: 8px 14px;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    letter-spacing: 0.5px;
+    border-color: rgba(30,42,58,0.90);
+    border-radius: 3px;
+    padding: 6px 13px;
+    margin-right: 6px;
+    margin-bottom: 5px;
+    letter-spacing: 0.3px;
+    transition-property: background-color, border-color, color;
+    transition-duration: 0.12s;
 }
-.dash-cam-btn:hover {
-    background-color: rgba(45, 52, 73, 0.95);
-    border-color: rgba(76, 215, 246, 0.35);
-}
-.dash-cam-btn--active {
-    border-color: rgba(76, 215, 246, 0.65);
-    background-color: rgba(76, 215, 246, 0.12);
-    color: rgb(76, 215, 246);
-}
+.dash-cam-btn:hover  { background-color: rgba(156,39,176,0.09); border-color: rgba(156,39,176,0.38); color: rgb(224,238,255); }
+.dash-cam-btn--active { border-color: rgba(156,39,176,0.60); background-color: rgba(156,39,176,0.12); color: rgb(206,147,216); }
 
-/* ── CCTV Calibration ──────────────────────────────────────────── */
-.dash-cctv-calib-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 4px;
-}
-
+/* Calibration dock */
+.dash-cctv-calib-header { flex-direction: row; align-items: center; justify-content: space-between; margin-top: 2px; }
 .dash-reset-btn {
-    font-size: 11px;
+    font-size: 9px;
     -unity-font-style: bold;
-    color: rgb(188, 201, 205);
-    background-color: rgba(34, 42, 61, 0.90);
+    color: rgb(106,140,175);
+    background-color: rgba(17,20,24,0.95);
     border-width: 1px;
-    border-color: rgba(76, 215, 246, 0.12);
+    border-color: rgba(46,56,85,0.55);
     border-radius: 4px;
-    padding: 4px 12px;
-    margin-bottom: 10px;
+    padding: 3px 10px;
+    margin-bottom: 7px;
+    transition-property: background-color, border-color;
+    transition-duration: 0.12s;
 }
-.dash-reset-btn:hover {
-    background-color: rgba(45, 52, 73, 0.95);
-    border-color: rgba(76, 215, 246, 0.35);
-}
-.dash-reset-btn:disabled {
-    opacity: 0.35;
-}
+.dash-reset-btn:hover   { background-color: rgba(46,56,85,0.35); border-color: rgba(156,39,176,0.38); }
+.dash-reset-btn:disabled { opacity: 0.32; }
 
-/* ── Calibration Sliders ──────────────────────────────────────── */
-.dash-calib-row {
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.dash-calib-row--single {
-    justify-content: flex-start;
-}
-
-.dash-calib-col {
-    width: 32%;
-    flex-direction: column;
-}
-
-.dash-calib-col--wide {
-    width: 100%;
-}
-
-.dash-calib-label {
-    font-size: 11px;
-    -unity-font-style: bold;
-    color: rgb(134, 147, 151);
-    margin-bottom: 4px;
-    letter-spacing: 0.5px;
-}
-
-.dash-calib-slider {
-    margin-bottom: 4px;
-}
-.dash-calib-slider .unity-base-slider__label {
-    font-size: 10px;
-    color: rgb(134, 147, 151);
-    min-width: 32px;
-}
-.dash-calib-slider .unity-base-slider__tracker {
-    background-color: rgba(34, 42, 61, 0.90);
-    border-color: rgba(76, 215, 246, 0.15);
-    border-width: 1px;
-}
-.dash-calib-slider .unity-base-slider__dragger {
-    background-color: rgb(76, 215, 246);
-    border-width: 0;
-}
-.dash-calib-col--wide .dash-calib-slider .unity-base-slider__label {
-    min-width: 52px;
-}
-.dash-calib-col--wide .dash-calib-slider {
-    width: 100%;
-    max-width: 420px;
-}
+.dash-calib-row         { flex-direction: row; justify-content: space-between; }
+.dash-calib-row--single { justify-content: flex-start; }
+.dash-calib-col         { width: 32%; flex-direction: column; }
+.dash-calib-col--wide   { width: 100%; }
+.dash-calib-slider { margin-bottom: 5px; }
+.dash-calib-slider .unity-base-slider__label { font-size: 9px; color: rgb(74,122,171); min-width: 34px; }
+.dash-calib-slider .unity-base-slider__tracker { background-color: rgba(30,42,58,0.80); border-color: rgba(156,39,176,0.18); border-width: 1px; }
+.dash-calib-slider .unity-base-slider__dragger { background-color: rgb(156,39,176); border-width: 0; }
+.dash-calib-col--wide .dash-calib-slider .unity-base-slider__label { min-width: 50px; }
+.dash-calib-col--wide .dash-calib-slider { width: 100%; max-width: 480px; }
