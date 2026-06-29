@@ -130,8 +130,20 @@
                         <ui:Label name="CapacityPercentLabel" text="0% Full" class="dash-capacity-pct" />
                     </ui:VisualElement>
 
+<<<<<<< Updated upstream
                     <ui:VisualElement class="dash-progress-track">
                         <ui:VisualElement name="CapacityProgressFill" class="dash-progress-fill" />
+=======
+                    <!-- Occupancy stat row -->
+                    <ui:VisualElement class="dash-gauge-row">
+
+                        <ui:VisualElement class="dash-gauge-meta">
+                            <ui:Label name="TotalCarsLabel"
+                                      text="Total Cars Entered This Session: 0"
+                                      class="dash-meta-label" />
+                        </ui:VisualElement>
+
+>>>>>>> Stashed changes
                     </ui:VisualElement>
 
                     <ui:Label name="TotalCarsLabel" text="Total Cars Entered This Session: 0" class="dash-meta-label" />
