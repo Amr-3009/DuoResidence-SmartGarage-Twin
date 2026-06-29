@@ -34,9 +34,14 @@ public class TwinDashboardController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI capacityPercentageText;
     [SerializeField] private TextMeshProUGUI facilityStatusText;
 
-    [Header("Dynamic Dashboard Palette")]
-    [SerializeField] private Color vacantZoneColor = Color.green;
-    [SerializeField] private Color occupiedZoneColor = Color.red;
+        [Header("Capacity Percentage Slider")]
+    [SerializeField] private Slider capacityPercentageSlider;
+    [SerializeField] private TextMeshProUGUI capacityPercentageSliderLabel;
+
+    
+[Header("Dynamic Dashboard Palette")]
+    [SerializeField] private Color vacantZoneColor = new Color(0.239f, 0.863f, 0.518f, 1f);  // #3ddc84
+    [SerializeField] private Color occupiedZoneColor = new Color(0.878f, 0.361f, 0.361f, 1f); // #e05c5c
 
     private int totalSlotsPerLane = 40; // <-- UPDATED: 40 slots per lane
     private int grandTotalFacilityCapacity = 120; // 3 lanes * 40 slots = 120
@@ -177,6 +182,15 @@ public class TwinDashboardController : MonoBehaviour
         if (capacityPercentageText != null)
         {
             capacityPercentageText.text = $"{computedFillRatio:F0}% Full";
+        }
+
+        if (capacityPercentageSlider != null)
+        {
+            capacityPercentageSlider.value = computedFillRatio;
+        }
+        if (capacityPercentageSliderLabel != null)
+        {
+            capacityPercentageSliderLabel.text = $"{computedFillRatio:F0}%";
         }
 
         if (sliderFillImage != null)

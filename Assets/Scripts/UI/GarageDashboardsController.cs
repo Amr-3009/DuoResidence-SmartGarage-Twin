@@ -60,7 +60,11 @@ public class GarageDashboardsController : MonoBehaviour
     private Label _laneAStatus, _laneBStatus, _laneCStatus;
     private VisualElement _laneAGrid, _laneBGrid, _laneCGrid;
 
-    private VisualElement _co2Fill, _noFill;
+        private UISlider _capacitySlider;
+    private Label _capacitySliderValueLabel;
+
+    
+private VisualElement _co2Fill, _noFill;
     private Label _co2ValueLabel, _noValueLabel;
 
     private Label _bigFanLabel, _smallFanLabel;
@@ -121,6 +125,11 @@ private void Awake()
         _laneBStatus = root.Q<Label>("LaneB_StatusLabel");
         _laneCStatus = root.Q<Label>("LaneC_StatusLabel");
         _laneAGrid = root.Q<VisualElement>("LaneA_Grid");
+
+        _capacitySlider           = root.Q<UISlider>("CapacitySlider");
+        _capacitySliderValueLabel = root.Q<Label>("CapacitySliderValueLabel");
+        if (_capacitySlider != null) _capacitySlider.SetEnabled(false); // read-only
+
         _laneBGrid = root.Q<VisualElement>("LaneB_Grid");
         _laneCGrid = root.Q<VisualElement>("LaneC_Grid");
 
@@ -319,7 +328,7 @@ private void Start()
             string slotID = lane + i.ToString("D2");
             _capacityMap[slotID] = true; // vacant by default
 
-            var tile = new VisualElement();
+            var tile = new Label(slotID);
             tile.AddToClassList("dash-parking-tile");
             tile.tooltip = slotID;
             grid.Add(tile);
@@ -394,6 +403,12 @@ private void Start()
 
         if (_capacityPercentLabel != null)
             _capacityPercentLabel.text = $"{pct:F0}% Full";
+
+        if (_capacitySlider != null)
+            _capacitySlider.SetValueWithoutNotify(pct);
+        if (_capacitySliderValueLabel != null)
+            _capacitySliderValueLabel.text = $"{pct:F0}%";
+
 
         if (_facilityStatusLabel != null)
         {
