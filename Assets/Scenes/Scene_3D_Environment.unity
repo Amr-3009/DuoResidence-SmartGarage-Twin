@@ -900,8 +900,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39ed206139484f14a968342b30c64c93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GarageCameraSwitcher
-  securityCameras: []
-  mainCamera: {fileID: 0}
+  securityCameras:
+  - {fileID: 1098564908}
+  - {fileID: 670383739}
+  - {fileID: 590014101}
+  - {fileID: 1496866990}
+  mainCamera: {fileID: 330585545}
 --- !u!4 &1020924115
 Transform:
   m_ObjectHideFlags: 0
