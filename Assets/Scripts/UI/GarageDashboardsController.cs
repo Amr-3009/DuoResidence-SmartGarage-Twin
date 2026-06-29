@@ -59,17 +59,8 @@ public class GarageDashboardsController : MonoBehaviour
     private Label _totalCarsLabel;
     private Label _laneAStatus, _laneBStatus, _laneCStatus;
     private VisualElement _laneAGrid, _laneBGrid, _laneCGrid;
-<<<<<<< Updated upstream
 
     private VisualElement _co2Fill, _noFill;
-=======
-    private VisualElement       _gaugeArcEl;
-    private CircularGaugePainter _gaugePainter;
-    private Label _capacitySliderValueLabel;
-
-    
-private VisualElement _co2Fill, _noFill;
->>>>>>> Stashed changes
     private Label _co2ValueLabel, _noValueLabel;
 
     private Label _bigFanLabel, _smallFanLabel;
@@ -130,15 +121,6 @@ private void Awake()
         _laneBStatus = root.Q<Label>("LaneB_StatusLabel");
         _laneCStatus = root.Q<Label>("LaneC_StatusLabel");
         _laneAGrid = root.Q<VisualElement>("LaneA_Grid");
-<<<<<<< Updated upstream
-=======
-
-_gaugeArcEl               = root.Q<VisualElement>("GaugeArcFill");
-            _capacitySliderValueLabel  = root.Q<Label>("GaugePctLabel");
-            if (_gaugeArcEl != null)
-                _gaugePainter = new CircularGaugePainter(_gaugeArcEl); //read-only
-
->>>>>>> Stashed changes
         _laneBGrid = root.Q<VisualElement>("LaneB_Grid");
         _laneCGrid = root.Q<VisualElement>("LaneC_Grid");
 
@@ -176,15 +158,14 @@ _gaugeArcEl               = root.Q<VisualElement>("GaugeArcFill");
     /// hides their canvases so only this UI Toolkit popup renders, subscribes to
     /// MQTT telemetry, and wires up the Fan and CCTV controls to those controllers.
     /// </summary>
-    [System.Obsolete]
-    private void Start()
+private void Start()
     {
         // ── Locate original controllers, disable their canvases ─────
         _hvac = FindObjectOfType<HvacDashboardController>(true);
         _fan  = FindObjectOfType<FanDashboardController>(true);
         _cctv = FindObjectOfType<CCTVClient>(true);
 
-        _wall = FindObjectOfType<TwinDashboardController>(true);
+                _wall = FindObjectOfType<TwinDashboardController>(true);
         DisableCanvas(_wall);
         DisableCanvas(_hvac);
         DisableCanvas(_fan);
@@ -414,14 +395,6 @@ _gaugeArcEl               = root.Q<VisualElement>("GaugeArcFill");
         if (_capacityPercentLabel != null)
             _capacityPercentLabel.text = $"{pct:F0}% Full";
 
-<<<<<<< Updated upstream
-=======
-_gaugePainter?.SetPercent(pct);
-        if (_capacitySliderValueLabel != null)
-            _capacitySliderValueLabel.text = $"{pct:F0}%";
-
-
->>>>>>> Stashed changes
         if (_facilityStatusLabel != null)
         {
             bool full = total >= TotalCapacity;
